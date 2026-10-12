@@ -31,6 +31,18 @@
 		25% { transform: translateX(-5px); }
 		75% { transform: translateX(5px); }
 	}
+
+	/* The loading ring draws itself from empty to complete, rests, and starts again; its dot leads the stroke. */
+	--animate-ring-fill: ring-fill 1.6s ease-in-out infinite;
+	--animate-ring-dot: ring-dot 1.6s ease-in-out infinite;
+	@keyframes ring-fill {
+		0% { stroke-dashoffset: 100; }
+		75%, 100% { stroke-dashoffset: 0; }
+	}
+	@keyframes ring-dot {
+		0% { transform: rotate(0deg); }
+		75%, 100% { transform: rotate(360deg); }
+	}
 }
 
 /* Tones: keep in sync with THEMES in lib/theme.ts. */
