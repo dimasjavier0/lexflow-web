@@ -30,12 +30,13 @@ export function useAdminLibrary() {
     if (userId) void reloadCollections();
   }, [reloadCollections, userId]);
 
-  /** Fetches (or refetches) the words of a collection. Throws on failure. */
+  /** Fetches (or refetches) the words of a collection and returns them. Throws on failure. */
   const loadWords = useCallback(async (collectionId: string) => {
     const current = sessionRef.current;
     if (!current) return;
     const words = await listWords(current, collectionId);
     setWordsByCollection((previous) => ({ ...previous, [collectionId]: words }));
+    return words;
   }, []);
 
   /**
