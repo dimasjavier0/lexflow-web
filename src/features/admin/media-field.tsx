@@ -169,7 +169,7 @@ export function MediaCarousel<T>({ search, onRetry, label, texts, children }: Me
   return (
     <div className="grid gap-2" aria-live="polite">
       {search.status === "idle" ? <Hint>{texts.idle}</Hint> : null}
-      {search.status === "searching" ? <p className="m-0 flex items-center gap-2 text-[0.82rem] text-muted"><Spinner className="size-4 border-2" /> {texts.searching}</p> : null}
+      {search.status === "searching" ? <p className="m-0 flex items-center gap-2 text-[0.82rem] text-muted"><Spinner className="size-4" /> {texts.searching}</p> : null}
       {current !== undefined ? (
         <div className="grid gap-1.5">
           {children(current, index)}

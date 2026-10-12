@@ -9,7 +9,7 @@ export function StatusPage({ children, isLoading = false, action }: StatusPagePr
   return (
     <AuthLayout>
       <div className="grid max-w-sm justify-items-center gap-4 text-center text-muted" role="status">
-        {isLoading ? <Spinner /> : null}
+        {isLoading ? <Spinner className="size-16" /> : null}
         <p className="m-0">{children}</p>
         {action}
       </div>

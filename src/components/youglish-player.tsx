@@ -93,7 +93,7 @@ export function YouglishPlayer({ query, accent = "us", autoStart = false, onResu
     <div className="grid gap-1.5">
       {/* YouGlish asks for a player of at least 200 × 200 px. */}
       <div ref={hostRef} className={status === "ready" ? "min-h-52 overflow-hidden rounded-xl" : "hidden"} />
-      {status === "loading" ? <p className="m-0 flex items-center gap-2 text-[0.82rem] text-muted"><Spinner className="size-4 border-2" /> Cargando YouGlish…</p> : null}
+      {status === "loading" ? <p className="m-0 flex items-center gap-2 text-[0.82rem] text-muted"><Spinner className="size-4" /> Cargando YouGlish…</p> : null}
       {status === "empty" ? <p className="m-0 text-[0.82rem] text-muted">YouGlish no tiene clips de “{query}”.</p> : null}
       {status === "failed" ? <p className="m-0 text-[0.82rem] font-semibold text-danger" role="alert">No se pudo cargar YouGlish.</p> : null}
       {status === "ready" ? <CarouselControls index={Math.max(0, track - 1)} count={total} onChange={move} label="Clip" /> : null}
