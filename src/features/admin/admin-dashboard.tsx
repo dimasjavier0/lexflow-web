@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { AlertTone, ToastMessage } from "../../components/ui";
 import { Alert, Button, EmptyState, Eyebrow, FilterChips, Modal, ProgressBar, Spinner, Toast } from "../../components/ui";
 import { AdminLayout } from "../../layouts/admin-layout";
@@ -7,7 +7,7 @@ import { repairImages, type AdminCollection, type BulkWordsResult, type RepairPr
 import { BulkWordsModal } from "./bulk-words-modal";
 import { CollectionFormModal } from "./collection-form-modal";
 import { DeleteCollectionModal } from "./delete-collection-modal";
-import { CollectionRow,WORD_FILTER_OPTIONS, type WordFilter } from "./collection-row";
+import { CollectionRow, matchesFilter, WORD_FILTER_OPTIONS, type WordFilter } from "./collection-row";
 import { useAdminLibrary } from "./use-admin-library";
 import { WordEditor } from "./word-editor";
 
@@ -44,6 +44,8 @@ export function AdminDashboard() {
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [isRepairing, setIsRepairing] = useState(false);
   const [repairProgress, setRepairProgress] = useState<RepairProgress | null>(null);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const filterRequest = useRef(0);
 
   const notify = useCallback((text: string, tone: AlertTone = "success") => setToast({ text, tone }), []);
   const dismissToast = useCallback(() => setToast(null), []);
@@ -72,7 +74,38 @@ export function AdminDashboard() {
     }
   };
 
-  const showAddedWords = (collectionId: string, message: string) => {
+  /** Applies a filter and leaves open exactly the collections that have words matching it. */
+  const applyWordFilter = async (filter: WordFilter) => {
+    const request = ++filterRequest.current;
+    setWordFilter(filter);
+    if (filter === "all" || !collections) {
+      setIsFiltering(false);
+      return;
+    }
+    setIsFiltering(true);
+    // Words load lazily, so collections never opened are fetched before looking for matches.
+    const matches = await Promise.all(
+      collections.map(async (collection) => {
+        if (!collection._count.words) return false;
+        try {
+          const words = wordsByCollection[collection.id] ?? (await loadWords(collection.id)) ?? [];
+          return words.some((word) => matchesFilter(word, filter));
+        } catch {
+          return null;
+        }
+      }),
+    );
+    // A newer filter was picked while this one was loading.
+    if (request !== filterRequest.current) return;
+    setIsFiltering(false);
+    // A collection that failed to load keeps the state it had.
+    setExpanded((current) => Object.fromEntries(collections.map((collection, index) => [collection.id, matches[index] ?? current[collection.id] ?? false])));
+    const failedCount = matches.filter((match) => match === null).length;
+    if (failedCount) notify(`No se pudieron cargar las palabras de ${failedCount} ${failedCount === 1 ? "colección" : "colecciones"}.`, "error");
+    else if (!matches.includes(true)) notify("Ninguna palabra coincide con el filtro.", "info");
+  };
+
+  const showAddedWords =(collectionId: string, message: string) => {
     setExpanded((current) => ({ ...current, [collectionId]: true }));
     closeModal();
     notify(message);
@@ -119,7 +152,10 @@ export function AdminDashboard() {
             ] : []}
           />
         ) : null}
-        <FilterChips label="Filtrar palabras" options={WORD_FILTER_OPTIONS} value={wordFilter} onChange={setWordFilter} />
+        <div className="flex flex-wrap items-center gap-3">
+          <FilterChips label="Filtrar palabras" options={WORD_FILTER_OPTIONS} value={wordFilter} onChange={(filter) => void applyWordFilter(filter)} />
+          {isFiltering ? <span role="status" className="flex items-center gap-2 text-xs text-muted"><Spinner /> Buscando palabras...</span> : null}
+        </div>
         {loadError ? <Alert action={<Button variant="secondary" size="sm" onClick={() => void reloadCollections()}>Reintentar</Button>}>{loadError}</Alert> : null}
         {!collections && !loadError ? <p className="m-0 flex items-center justify-center gap-2 py-10 text-sm text-muted"><Spinner /> Cargando colecciones...</p> : null}
         {collections?.length === 0 ? (

@@ -19,7 +19,7 @@ export const WORD_FILTER_OPTIONS: ReadonlyArray<{ value: WordFilter; label: stri
   { value: "audio", label: "Sin sonido" },
 ];
 
-function matchesFilter(word: AdminWord, filter: WordFilter): boolean {
+export function matchesFilter(word: AdminWord, filter: WordFilter): boolean {
   if (filter === "translation") return !word.translationEs.trim();
   if (filter === "images") return word.images.length === 0;
   if (filter === "audio") return word.audios.length === 0;
