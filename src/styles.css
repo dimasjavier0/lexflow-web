@@ -3,6 +3,8 @@
 @theme {
 	--font-sans: "Trebuchet MS", "Segoe UI", sans-serif;
 	--font-mono: Consolas, "Courier New", monospace;
+	/* Only for the LexFlow wordmark; the file is loaded in main.tsx. */
+	--font-brand: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
 
 	--color-ink: #17324d;
 	--color-muted: #6d7f8e;

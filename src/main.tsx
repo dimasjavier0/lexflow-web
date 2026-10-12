@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./app";
 import { AuthProvider } from "./contexts/auth-context";
 import { applyThemeChoice, readThemeChoice } from "./lib/theme";
+import "@fontsource/baloo-2/latin-800.css";
 import "./styles.css";
 
 applyThemeChoice(readThemeChoice());
