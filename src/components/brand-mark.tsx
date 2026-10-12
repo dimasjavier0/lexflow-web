@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { cn } from "../lib/cn";
 
-/** The LexFlow symbol: a coral drop with an L inside. Keep in sync with public/favicon.svg and public/icon.svg. */
+/** The LexFlow symbol: a coral drop with an L inside. Keep in sync with public/favicon.svg and public/icon.svg (icon-192.png and icon-512.png are renders of icon.svg). */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 64 64" className={cn("inline-block size-6 shrink-0", className)}>
