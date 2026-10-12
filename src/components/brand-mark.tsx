@@ -13,9 +13,12 @@ export function LogoMark({ className }: { className?: string }) {
 
 export function BrandMark() {
   return (
-    <Link to="/" aria-label="LexFlow inicio" className="inline-flex items-center gap-1.5 text-sm font-black tracking-[0.15em] text-ink no-underline">
-      <LogoMark />
-      LEXFLOW
+    <Link to="/" aria-label="LexFlow English, inicio" className="inline-flex items-center gap-2 text-ink no-underline">
+      <LogoMark className="size-9" />
+      <span className="grid text-left leading-none">
+        <span className="font-brand text-[1.65rem] leading-[0.9] font-extrabold tracking-tight">LexFlow</span>
+        <span className="text-[0.58rem] font-bold tracking-[0.34em] text-teal-dark uppercase">English</span>
+      </span>
     </Link>
   );
 }
