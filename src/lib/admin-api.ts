@@ -68,6 +68,36 @@ export type VideoCandidate = NewWordVideo & {
 
 export type BulkWordsResult = { words: AdminWord[]; skipped: number; received: number; failedAudio: number; withoutImages: number; collectionId: string; collectionCreated: boolean };
 
+/** An image a quick-list preview offers. `url` is Pixabay's 24-hour link: the API stores a copy when the list is saved. */
+export type BulkPreviewImage = { url: string; previewUrl: string; attribution: string; metadata: Record<string, unknown> };
+
+/** What saving a word of a quick list would do. Existing words show their own data, which the save keeps. */
+export type BulkWordPreview = {
+  term: string;
+  translationEs: string;
+  level: string;
+  /** `linked` words are already in the collection and the save skips them. */
+  status: "new" | "reused" | "linked";
+  /** Images the word already has; the save adds no others. */
+  images: string[];
+  /** Pixabay results to pick from, only for the words that would get images. */
+  candidates: BulkPreviewImage[];
+};
+
+/** A quick list as it would be saved. `collection.id` is null when the save would create the collection. */
+export type BulkListPreview = {
+  collection: { id: string | null; name: string; slug: string; imageUrl: string | null; wordCount: number; isNew: boolean };
+  words: BulkWordPreview[];
+};
+
+/** Words looked up so far, counting only the ones that would get images. */
+export type BulkPreviewProgress = ApiProgress<"imagesFound" | "imagesMissing">;
+
+/** A word of a quick list. `images` are the ones picked in the preview, possibly none; left out, the API picks them. */
+export type BulkWordInput = { term: string; translationEs: string; level?: CefrLevel; images?: Array<Omit<BulkPreviewImage, "previewUrl">> };
+
+export type BulkWordsInput = { words: BulkWordInput[]; collectionName?: string; collectionSlug?: string };
+
 /** Words of a list handled so far, by whether they ended up with images and with a pronunciation. */
 export type BulkWordsProgress = ApiProgress<"withImages" | "withoutImages" | "withAudio" | "withoutAudio">;
 
@@ -139,10 +169,22 @@ export async function createWord(
   return body.word.word;
 }
 
+/** Looks a quick list up and proposes its images without saving anything. */
+export async function previewWordsBulk(session: Session, collectionId: string, input: BulkWordsInput, onProgress?: OnProgress<BulkPreviewProgress>): Promise<BulkListPreview> {
+  return apiRequest<BulkListPreview>(`/admin/collections/${collectionId}/words/bulk/preview`, {
+    method: "POST",
+    session,
+    body: input,
+    errorMessage: "No se pudo preparar la vista previa.",
+    statusMessages: { 400: "Revisa la lista y los datos de la colección.", 404: "La colección elegida ya no existe. Elige otra." },
+    onProgress: typed(onProgress),
+  });
+}
+
 export async function createWordsBulk(
   session: Session,
   collectionId: string,
-  input: { words: Array<{ term: string; translationEs: string; level?: CefrLevel }>; collectionName?: string; collectionSlug?: string },
+  input: BulkWordsInput,
   onProgress?: OnProgress<BulkWordsProgress>,
 ): Promise<BulkWordsResult> {
   return apiRequest<BulkWordsResult>(`/admin/collections/${collectionId}/words/bulk`, {

@@ -45,6 +45,23 @@ function actionSummary(action: WordsAction, affected: number, failed: number, ha
   return failed ? { text: `${repaired}; ${failed} no se pudieron recuperar. Prueba «Reemplazar imágenes».`, tone: "info" } : { text: `${repaired}.`, tone: "success" };
 }
 
+/** Cover and name of a collection, as the panel lists it. `detail` goes under the name. */
+export function CollectionSummary({ name, imageUrl, detail }: { name: string; imageUrl: string | null; detail: string }) {
+  return (
+    <>
+      {imageUrl ? (
+        <img className="size-11 shrink-0 rounded-xl object-cover" src={imageUrl} alt="" />
+      ) : (
+        <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl bg-teal-soft font-black text-teal-dark">{name.slice(0, 1).toUpperCase()}</span>
+      )}
+      <span className="min-w-0 flex-1">
+        <strong className="block truncate">{name}</strong>
+        <small className="block truncate text-[0.82rem] text-muted">{detail}</small>
+      </span>
+    </>
+  );
+}
+
 type CollectionRowProps = {
   collection: AdminCollection;
   library: AdminLibrary;
@@ -179,15 +196,7 @@ export function CollectionRow({ collection, library, isExpanded, onToggle, onEdi
       <div className="flex flex-wrap items-center gap-2 p-2">
         <button type="button" aria-expanded={isExpanded} aria-controls={panelId} onClick={onToggle} className="flex min-w-0 flex-1 basis-60 cursor-pointer items-center gap-3 rounded-xl p-2 text-left hover:bg-teal-soft/50">
           <span aria-hidden="true" className={`w-4 text-center text-xl text-teal-dark transition-transform ${isExpanded ? "rotate-90" : ""}`}>›</span>
-          {collection.imageUrl ? (
-            <img className="size-11 shrink-0 rounded-xl object-cover" src={collection.imageUrl} alt="" />
-          ) : (
-            <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl bg-teal-soft font-black text-teal-dark">{collection.name.slice(0, 1).toUpperCase()}</span>
-          )}
-          <span className="min-w-0 flex-1">
-            <strong className="block truncate">{collection.name}</strong>
-            <small className="block truncate text-[0.82rem] text-muted">/{collection.slug} · {wordCount} {wordCount === 1 ? "palabra" : "palabras"}</small>
-          </span>
+          <CollectionSummary name={collection.name} imageUrl={collection.imageUrl} detail={`/${collection.slug} · ${plural(wordCount, "palabra", "palabras")}`} />
         </button>
         <div className="ml-auto flex items-center gap-2 pr-1">
           <Button variant="secondary" size="sm" onClick={onEdit}>Editar</Button>
