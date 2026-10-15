@@ -1,3 +1,4 @@
+import { CEFR_LEVELS, isCefrLevel, type CefrLevel } from "../../lib/levels";
 import { normalizeText, slugify } from "../../lib/slug";
 
 export type BulkLine = {
@@ -5,12 +6,16 @@ export type BulkLine = {
   raw: string;
   term: string;
   translationEs: string;
+  /** null when the line gives no level: new words are then created as A1. */
+  level: CefrLevel | null;
   status: "valid" | "invalid" | "warning" | "empty" | "heading";
   message: string;
 };
 
+export type BulkWord = { term: string; translationEs: string; level?: CefrLevel };
+
 /** One list of the pasted text. `title` is null for words written before any heading. */
-export type BulkList = { title: string | null; words: Array<{ term: string; translationEs: string }> };
+export type BulkList = { title: string | null; words: BulkWord[] };
 
 export type ParsedBulk = { lines: BulkLine[]; lists: BulkList[] };
 
@@ -22,6 +27,14 @@ const LIST_MARKER_PATTERN = /^(?:[-*+]|\d+[.)])\s+(?:\[[ xX]\]\s+)?/;
 const TABLE_DIVIDER_PATTERN = /^\|?\s*:?-{2,}:?\s*(?:\|\s*:?-{2,}:?\s*)*\|?$/;
 /** Tried in order; the comma is the original format and wins when present. */
 const SEPARATORS = [",", "\t", " — ", " – ", " - ", ":", "=", "|"];
+/**
+ * A last field shaped like a level ("A1", "b2", "D4") after the translation. Anything
+ * with that shape is taken as the level, so a typo is reported instead of being saved
+ * as part of the translation.
+ */
+const TRAILING_LEVEL_PATTERN = /^(.*?)\s*(?:,|\t|\||—|–|\s-|:|=)\s*([A-Za-z][0-9])$/;
+const LEVEL_SHAPE_PATTERN = /^[A-Za-z][0-9]$/;
+const LEVEL_HELP =`Nivel no válido: usa ${CEFR_LEVELS.join(", ")}`;
 
 /** Drops Markdown emphasis, code and link syntax around a cell. */
 function cleanInline(value: string): string {
@@ -31,23 +44,32 @@ function cleanInline(value: string): string {
     .trim();
 }
 
-function splitPair(text: string): [string, string] | null {
+/** Splits "word, translation[, level]". `level` is the raw last field, still unchecked. */
+function splitLine(text: string): { term: string; translationEs: string; level: string | null } | null {
   if (text.startsWith("|")) {
     const cells = text.replace(/^\||\|$/g, "").split("|").map(cleanInline);
-    return cells.length >= 2 ? [cells[0], cells[1]] : null;
+    return cells.length >= 2 ? { term: cells[0], translationEs: cells[1], level: LEVEL_SHAPE_PATTERN.test(cells[2] ?? "") ? cells[2] : null } : null;
   }
   for (const separator of SEPARATORS) {
     const index = text.indexOf(separator);
-    if (index > 0) return [cleanInline(text.slice(0, index)), cleanInline(text.slice(index + separator.length))];
+    if (index <= 0) continue;
+    const rest = text.slice(index + separator.length).trim();
+    const trailing = TRAILING_LEVEL_PATTERN.exec(rest);
+    return {
+      term: cleanInline(text.slice(0, index)),
+      translationEs: cleanInline(trailing ? trailing[1] : rest),
+      level: trailing ? trailing[2] : null,
+    };
   }
   return null;
 }
 
 /**
  * Parses pasted Markdown into word lists. A heading ("# Animals") starts a list named
- * after it; the lines below are "english word, traducción" pairs, optionally written as
- * list items ("- cat, gato") or table rows ("| cat | gato |"). Malformed lines are
- * flagged, and words repeated within a list (ignoring accents and case) are skipped.
+ * after it; the lines below are "english word, traducción[, nivel]" entries, optionally
+ * written as list items ("- cat, gato, A1") or table rows ("| cat | gato | A1 |").
+ * Malformed lines are flagged, and words repeated within a list (ignoring accents and
+ * case) are skipped.
  */
 export function parseBulkMarkdown(value: string): ParsedBulk {
   const rawLines = value.split(/\r?\n/);
@@ -65,7 +87,7 @@ export function parseBulkMarkdown(value: string): ParsedBulk {
 
   const lines = rawLines.map((raw, index): BulkLine => {
     const line = index + 1;
-    const base = { line, raw, term: "", translationEs: "" };
+    const base = { line, raw, term: "", translationEs: "", level: null };
     const trimmed = raw.trim();
     if (!trimmed) return { ...base, status: "empty", message: "Línea vacía" };
 
@@ -83,19 +105,21 @@ export function parseBulkMarkdown(value: string): ParsedBulk {
     if (TABLE_DIVIDER_PATTERN.test(trimmed)) return { ...base, status: "empty", message: "Separador de tabla" };
     if (trimmed.startsWith("|") && TABLE_DIVIDER_PATTERN.test(rawLines[index + 1]?.trim() ?? "")) return { ...base, status: "empty", message: "Encabezado de tabla" };
 
-    const pair = splitPair(trimmed.replace(LIST_MARKER_PATTERN, ""));
-    if (!pair) return { ...base, status: "invalid", message: "Usa: palabra en inglés, traducción" };
-    const [term, translationEs] = pair;
+    const parts = splitLine(trimmed.replace(LIST_MARKER_PATTERN, ""));
+    if (!parts) return { ...base, status: "invalid", message: "Usa: palabra en inglés, traducción, nivel" };
+    const { term, translationEs } = parts;
     if (!term || !translationEs) return { ...base, term, translationEs, status: "invalid", message: "Falta la palabra o la traducción" };
     if (term.length > 100 || translationEs.length > 200) return { ...base, term, translationEs, status: "invalid", message: "Texto demasiado largo" };
+    const level = parts.level?.toUpperCase() ?? null;
+    if (level !== null && !isCefrLevel(level)) return { ...base, term, translationEs, status: "invalid", message: LEVEL_HELP };
 
     if (!lists.has(listKey)) openList(listKey, null);
     const seen = seenByList.get(listKey)!;
     const key = normalizeText(term);
-    if (seen.has(key)) return { ...base, term, translationEs, status: "warning", message: "Palabra repetida; se omitirá el duplicado" };
+    if (seen.has(key)) return { ...base, term, translationEs, level, status: "warning", message: "Palabra repetida; se omitirá el duplicado" };
     seen.add(key);
-    lists.get(listKey)!.words.push({ term, translationEs });
-    return { ...base, term, translationEs, status: "valid", message: "Línea válida" };
+    lists.get(listKey)!.words.push(level ? { term, translationEs, level } : { term, translationEs });
+    return { ...base, term, translationEs, level, status: "valid", message: `Línea válida · ${level ?? "A1"}` };
   });
 
   return { lines, lists: [...lists.values()].filter((list) => list.words.length > 0) };

@@ -1,4 +1,5 @@
 import type { Session } from "@supabase/supabase-js";
+import type { CefrLevel } from "./levels";
 import { apiRequest, type ApiProgress } from "./api";
 import { VIDEO_SOURCES, type VideoSourceId, type WordVideo } from "./video-sources";
 import type { ExampleSentence, PartOfSpeech, WordRelationshipType } from "./word-details";
@@ -141,7 +142,7 @@ export async function createWord(
 export async function createWordsBulk(
   session: Session,
   collectionId: string,
-  input: { words: Array<{ term: string; translationEs: string }>; collectionName?: string; collectionSlug?: string },
+  input: { words: Array<{ term: string; translationEs: string; level?: CefrLevel }>; collectionName?: string; collectionSlug?: string },
   onProgress?: OnProgress<BulkWordsProgress>,
 ): Promise<BulkWordsResult> {
   return apiRequest<BulkWordsResult>(`/admin/collections/${collectionId}/words/bulk`, {

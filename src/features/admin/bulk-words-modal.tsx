@@ -18,7 +18,7 @@ const LINE_CLASSES: Record<BulkLine["status"], string> = {
   heading: "bg-white/5 font-bold text-[#8fd3ff]",
 };
 
-const PLACEHOLDER = "# Animals\n- cat, gato\n- dog, perro\n\n# Food\napple, manzana\nbread, pan";
+const PLACEHOLDER = "# Animals\n- cat, gato, A1\n- dog, perro, A1\n\n# Food\napple, manzana, A1\nbread, pan\nflour, harina, B1";
 
 type BulkWordsModalProps = {
   library: AdminLibrary;
@@ -89,13 +89,13 @@ export function BulkWordsModal({ library, onClose, onListDone, onDone }: BulkWor
     <Modal title="Lista de palabras" eyebrow="Carga rápida" size="lg" onClose={onClose}>
       <form className="grid gap-4" onSubmit={(event) => void submit(event)}>
         <p className="m-0 text-sm leading-snug text-muted">
-          Pega una o varias listas en Markdown: cada título (<code># Animals</code>) es una colección y debajo va una palabra por línea con su traducción.
-          Las colecciones y palabras que ya existen se reutilizan, sin distinguir acentos ni mayúsculas; el resto se crea como borrador A1 con imágenes y pronunciación.
+          Pega una o varias listas en Markdown: cada título (<code># Animals</code>) es una colección y debajo va una palabra por línea con su traducción y, si quieres, su nivel (<code>cat, gato, A1</code>).
+          Las colecciones y palabras que ya existen se reutilizan, sin distinguir acentos ni mayúsculas, y conservan su nivel; el resto se crea como borrador con imágenes y pronunciación, en el nivel indicado o en A1 si la línea no lo trae.
         </p>
         <div className="overflow-hidden rounded-xl border border-[#26384b] bg-[#101923] font-mono shadow-card">
           <div className="flex items-center justify-between gap-3 bg-[#1b2937] px-3 py-2 text-xs text-[#d7e2ec]">
             <label htmlFor="bulk-words-text">Listas de palabras</label>
-            <small className="text-[0.68rem] text-[#9fb2c2]"># título · palabra en inglés, traducción</small>
+            <small className="text-[0.68rem] text-[#9fb2c2]"># título · palabra en inglés, traducción, nivel</small>
           </div>
           <textarea
             id="bulk-words-text"
