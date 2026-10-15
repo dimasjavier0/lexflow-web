@@ -3,6 +3,25 @@ import { Badge, Button, IconButton, Switch } from "../../components/ui";
 import type { AdminWord } from "../../lib/admin-api";
 import { cn } from "../../lib/cn";
 
+type WordSummaryProps = { term: string; translationEs: string; level: string; coverUrl: string | null | undefined };
+
+/** Cover, term, translation and level of a word, as the panel lists it. */
+export function WordSummary({ term, translationEs, level, coverUrl }: WordSummaryProps) {
+  return (
+    <>
+      {coverUrl ? (
+        <img className="size-11 shrink-0 rounded-lg bg-teal-soft object-cover" src={coverUrl} alt="" />
+      ) : (
+        <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-lg bg-line/50 text-muted">?</span>
+      )}
+      <span className="min-w-0 flex-1">
+        <strong className="block truncate">{term}</strong>
+        <small className="block truncate text-[0.82rem] text-muted">{translationEs.trim() || "Sin traducción"} · {level}</small>
+      </span>
+    </>
+  );
+}
+
 type WordRowProps = {
   word: AdminWord;
   isEditing: boolean;
@@ -45,15 +64,7 @@ export function WordRow({ word, isEditing, onToggleEdit, isSelected, isSelection
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 p-2">
         <input type="checkbox" className="ml-1 size-4 shrink-0 cursor-pointer accent-teal-dark" aria-label={`Seleccionar ${word.term}`} checked={isSelected} disabled={isSelectionDisabled} onChange={(event) => onSelect(event.target.checked)} />
         <button type="button" aria-expanded={isEditing} onClick={onToggleEdit} className="flex min-w-0 flex-1 basis-40 cursor-pointer items-center gap-3 rounded-lg p-1 text-left hover:bg-teal-soft/50">
-          {cover ? (
-            <img className="size-11 shrink-0 rounded-lg bg-teal-soft object-cover" src={cover.url} alt="" />
-          ) : (
-            <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-lg bg-line/50 text-muted">?</span>
-          )}
-          <span className="min-w-0 flex-1">
-            <strong className="block truncate">{word.term}</strong>
-            <small className="block truncate text-[0.82rem] text-muted">{word.translationEs.trim() || "Sin traducción"} · {word.level}</small>
-          </span>
+          <WordSummary term={word.term} translationEs={word.translationEs} level={word.level} coverUrl={cover?.url} />
         </button>
         <div className="flex flex-wrap items-center gap-1.5 pr-1">
           {otherImages.length ? <Badge tone="neutral">+{otherImages.length} img</Badge> : null}
