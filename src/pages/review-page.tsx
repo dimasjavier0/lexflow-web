@@ -50,11 +50,14 @@ export function ReviewPage() {
   // Letters placed in the word builder, as positions of its bank (levels below the last).
   const [picked, setPicked] = useState<number[]>([]);
   const [isHintVisible, setIsHintVisible] = useState(false);
+  // A wrong first attempt is not graded yet: the learner may try once more for fewer points.
+  const [attemptState, setAttemptState] = useState<"first" | "missed" | "retrying">("first");
   const [answered, setAnswered] = useState<Answered | null>(null);
   const [results, setResults] = useState<Answered[]>([]);
   const check = useAsyncAction();
   const inputRef = useRef<HTMLInputElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
+  const retryRef = useRef<HTMLButtonElement>(null);
   const sessionRef = useRef(session);
   sessionRef.current = session;
 
@@ -88,8 +91,9 @@ export function ReviewPage() {
   // Move focus with the flow so the whole review can be done from the keyboard.
   useEffect(() => {
     if (answered) nextRef.current?.focus();
+    else if (attemptState === "missed") retryRef.current?.focus();
     else inputRef.current?.focus();
-  }, [answered, item]);
+  }, [answered, attemptState, item]);
 
   const grade = useCallback((result: ReviewResult) => {
     if (!session || !item || check.isPending) return;
@@ -168,8 +172,12 @@ export function ReviewPage() {
   const checkAttempt = () => {
     if (!isAttemptComplete) return;
     const isRight = normalize(attempt) === normalize(word.term);
-    // Needing the translation to get there still counts, but as a weaker recall.
-    grade(isRight ? (isHintVisible ? "hard" : "correct") : "incorrect");
+    if (!isRight && attemptState === "first") {
+      setAttemptState("missed");
+      return;
+    }
+    // A second attempt or the translation still count, but as a weaker recall.
+    grade(isRight ? (attemptState === "retrying" ? "retried" : isHintVisible ? "hard" : "correct") : "incorrect");
   };
 
   const submit = (event: FormEvent) => {
@@ -177,11 +185,18 @@ export function ReviewPage() {
     checkAttempt();
   };
 
+  const retry = () => {
+    setAnswer("");
+    setPicked([]);
+    setAttemptState("retrying");
+  };
+
   const goNext = () => {
     setIndex((current) => current + 1);
     setAnswer("");
     setPicked([]);
     setIsHintVisible(false);
+    setAttemptState("first");
     setAnswered(null);
     check.clearError();
   };
@@ -202,10 +217,10 @@ export function ReviewPage() {
         {answered ? (
           <>
             <Alert tone={answered.result === "incorrect" ? "error" : "success"}>
-              {answered.result === "incorrect" ? `La palabra era “${word.term}”.` : answered.result === "hard" ? "Correcto, con pista." : "¡Correcto!"}{" "}
+              {answered.result === "incorrect" ? `La palabra era “${word.term}”.` : answered.result === "hard" ? "Correcto, con pista." : answered.result === "retried" ? "Correcto, al segundo intento." : "¡Correcto!"}{" "}
               {answered.outcome.becameMastered ? "¡Ya la dominas! " : ""}
               {nextReviewLabel(answered.outcome.progress.intervalDays)}
-              {answered.outcome.pointsEarned ? ` +${answered.outcome.pointsEarned} puntos.` : ""}
+              {answered.outcome.pointsEarned ? ` +${answered.outcome.pointsEarned} ${answered.outcome.pointsEarned === 1 ? "punto" : "puntos"}.` : ""}
             </Alert>
             <div className="grid gap-1 rounded-2xl bg-paper p-4 text-center">
               <strong className="text-2xl">{word.translationEs}</strong>
@@ -213,9 +228,19 @@ export function ReviewPage() {
             </div>
             <Button ref={nextRef} size="lg" onClick={goNext}>{index === items.length - 1 ? "Ver resumen" : "Siguiente"}</Button>
           </>
+        ) : attemptState === "missed" ? (
+          <div className="grid gap-3">
+            <Alert>No es “{attempt.trim()}”. Puedes intentarlo una vez más: si aciertas ganas 1 punto en lugar de 2.</Alert>
+            {check.error ? <Alert>{check.error} Inténtalo de nuevo.</Alert> : null}
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button ref={retryRef} onClick={retry}>Reintentar</Button>
+              <Button variant="secondary" isLoading={check.isPending} loadingLabel="Guardando..." onClick={() => grade("incorrect")}>Ver la respuesta</Button>
+            </div>
+          </div>
         ) : (
           <form className="grid gap-3" onSubmit={submit}>
             <LevelSteps level={item.level} />
+            {attemptState === "retrying" ? <p className="m-0 text-center text-xs font-extrabold text-warning">Segundo intento · vale 1 punto</p> : null}
             {exercise ? (
               <WordBuilder exercise={exercise} picked={picked} onChange={setPicked} onSubmit={checkAttempt} disabled={check.isPending} />
             ) : (
