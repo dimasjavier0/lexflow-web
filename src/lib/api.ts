@@ -16,7 +16,7 @@ export type ApiUser = {
   name: string | null;
   avatarUrl: string | null;
   pointsTotal: number;
-  /** Derived from the points: level n starts at (n - 1)² × 100. */
+  /** Derived from the points: level n starts at (n - 1)² × 20. */
   level: number;
   pointsIntoLevel: number;
   pointsForLevel: number;
@@ -208,7 +208,8 @@ export async function getProgressSummary(session: Session, level: CefrLevel | nu
   return Object.fromEntries(body.summary.map((item) => [item.collectionId, item.learned]));
 }
 
-export type ReviewResult = "correct" | "hard" | "incorrect";
+/** `hard`: right after seeing the translation. `retried`: right at the second attempt. */
+export type ReviewResult = "correct" | "hard" | "retried" | "incorrect";
 export type SrsStage = "NEW" | "LEARNING" | "MASTERED";
 
 /** How much help a review gives, from 1 (half the word is filled in) to 4 (typed from memory). */
