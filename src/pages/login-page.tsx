@@ -7,8 +7,10 @@ import { useAsyncAction } from "../hooks/use-async-action";
 import { AuthLayout } from "../layouts/auth-layout";
 
 export function LoginPage() {
-  const { isAuthenticated, isLoading, signInWithGoogle } = useAuth();
-  const signIn = useAsyncAction();
+  const { isAuthenticated, isLoading, signInWithGoogle, signInWithFacebook } = useAuth();
+  const google = useAsyncAction();
+  const facebook = useAsyncAction();
+  const error = google.error ?? facebook.error;
 
   if (isLoading) return <StatusPage isLoading>Comprobando sesión...</StatusPage>;
   if (isAuthenticated) return <Navigate to="/" replace />;
@@ -23,10 +25,15 @@ export function LoginPage() {
         </div>
         <h1 className="m-0 text-4xl leading-none font-bold tracking-tighter">Aprende palabras en contexto.</h1>
         <p className="mt-3.5 mb-6 leading-normal text-muted">Inicia sesión para continuar con tu aprendizaje.</p>
-        <Button size="lg" isLoading={signIn.isPending} loadingLabel="Redirigiendo..." onClick={() => void signIn.run(signInWithGoogle, "No se pudo iniciar sesión.")}>
-          Continuar con Google
-        </Button>
-        {signIn.error ? <Alert className="mt-4 text-left">{signIn.error}</Alert> : null}
+        <div className="grid gap-3">
+          <Button size="lg" isLoading={google.isPending} loadingLabel="Redirigiendo..." onClick={() => void google.run(signInWithGoogle, "No se pudo iniciar sesión.")}>
+            Continuar con Google
+          </Button>
+          <Button size="lg" variant="secondary" isLoading={facebook.isPending} loadingLabel="Redirigiendo..." onClick={() => void facebook.run(signInWithFacebook, "No se pudo iniciar sesión.")}>
+            Continuar con Facebook
+          </Button>
+        </div>
+        {error ? <Alert className="mt-4 text-left">{error}</Alert> : null}
       </section>
     </AuthLayout>
   );

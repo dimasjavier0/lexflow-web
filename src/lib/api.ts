@@ -272,6 +272,39 @@ export async function updateProfile(session: Session, input: { name: string | nu
   return body.user;
 }
 
+/** Sends the Facebook token of a sign-in that just came back, so the API reads who the learner's friends are. */
+export async function syncFacebookFriends(session: Session, accessToken: string): Promise<void> {
+  await apiRequest("/me/facebook", {
+    method: "POST",
+    session,
+    body: { accessToken },
+    errorMessage: "No se pudo leer tu lista de amigos de Facebook.",
+    statusMessages: {
+      400: "Facebook no aceptó el inicio de sesión. Vuelve a conectar tu cuenta.",
+      409: "Esa cuenta de Facebook ya está vinculada a otro usuario de LexFlow.",
+      502: "Facebook no respondió. Vuelve a conectar tu cuenta en unos minutos.",
+      503: "El inicio de sesión con Facebook todavía no está configurado en el servidor.",
+    },
+  });
+}
+
+export type FriendRow = { id: string; name: string | null; avatarUrl: string | null; knownWords: number };
+
+export type Friends = {
+  facebook: {
+    connected: boolean;
+    /** Whether the learner let LexFlow read their friend list in their last Facebook sign-in. */
+    friendsGranted: boolean;
+  };
+  me: FriendRow;
+  /** Facebook friends who use LexFlow, most known words first. */
+  friends: FriendRow[];
+};
+
+export async function getFriends(session: Session): Promise<Friends> {
+  return apiRequest<Friends>("/me/friends", { session, errorMessage: "No se pudieron cargar tus amigos." });
+}
+
 export type WordSearchResult = { id: string; term: string; level: string; collection: { slug: string; name: string } };
 
 /** Published words whose English term starts with `query`. */

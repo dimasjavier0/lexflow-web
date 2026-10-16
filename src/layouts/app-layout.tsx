@@ -25,6 +25,7 @@ function AppTopbar() {
         {apiUser?.role === "ADMIN" ? <Link className={buttonClasses({ variant: "secondary", size: "sm" })} to="/admin">Panel admin</Link> : null}
         {isAuthenticated ? <Link className={buttonClasses({ variant: "ghost", size: "sm" })} to="/review">Repasar</Link> : null}
         {isAuthenticated ? <Link className={buttonClasses({ variant: "ghost", size: "sm" })} to="/profile">Mi progreso</Link> : null}
+        {isAuthenticated ? <Link className={buttonClasses({ variant: "ghost", size: "sm" })} to="/friends">Amigos</Link> : null}
         {isAuthenticated ? (
           <Button variant="ghost" size="sm" onClick={() => void signOut()}>Salir</Button>
         ) : (
