@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { Avatar } from "../components/avatar";
 import { StatusPage } from "../components/status-page";
 import { Alert, Button, buttonClasses, Eyebrow, Field, Input } from "../components/ui";
 import { useAuth } from "../contexts/auth-context";
@@ -18,14 +19,6 @@ function Stat({ label, value, hint, className }: { label: string; value: ReactNo
       {hint ? <p className="m-0 text-xs text-muted">{hint}</p> : null}
     </div>
   );
-}
-
-/** The learner's picture, or their initial when there is none or it no longer loads. */
-function Avatar({ url, name }: { url: string | null; name: string }) {
-  const [failedUrl, setFailedUrl] = useState<string | null>(null);
-  if (!url || url === failedUrl) return <span aria-hidden="true" className="grid size-20 shrink-0 place-items-center rounded-3xl bg-teal-soft text-4xl font-black text-teal-dark">{name.slice(0, 1).toUpperCase()}</span>;
-  // Google only serves account pictures to requests that do not say where they come from.
-  return <img className="size-20 shrink-0 rounded-3xl bg-teal-soft object-cover" src={url} alt="" width={80} height={80} referrerPolicy="no-referrer" onError={() => setFailedUrl(url)} />;
 }
 
 function days(count: number): string {
@@ -138,7 +131,7 @@ export function ProfilePage() {
           <Field label="Nombre">
             <Input maxLength={60} value={name} onChange={(event) => setName(event.target.value)} placeholder={user.email.split("@")[0]} />
           </Field>
-          <Field label="Avatar" hint="Dirección de una imagen. Si lo dejas vacío se usa la foto de tu cuenta de Google.">
+          <Field label="Avatar" hint="Dirección de una imagen. Si lo dejas vacío se usa la foto de tu cuenta de Google o Facebook.">
             <Input type="url" maxLength={500} value={avatarUrl} onChange={(event) => setAvatarUrl(event.target.value)} placeholder="https://..." />
           </Field>
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2">

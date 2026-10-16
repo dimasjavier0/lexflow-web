@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { FriendsPage } from "./pages/friends-page";
 import { LoginPage } from "./pages/login-page";
 import { HomePage } from "./pages/home-page";
 import { LearnPage } from "./pages/learn-page";
@@ -17,6 +18,7 @@ export function App() {
         <Route path="/learn/:collectionSlug" element={<LearnPage />} />
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/friends" element={<FriendsPage />} />
         <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminDashboard />} />
         </Route>
