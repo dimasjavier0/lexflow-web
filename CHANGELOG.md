@@ -1,21 +1,25 @@
 # Changelog
 
-Los cambios relevantes del proyecto se registran aquí, por versión y con su fecha (AAAA-MM-DD).
+Los cambios relevantes de la web de LexFlow se registran aquí, por versión y con su fecha (AAAA-MM-DD).
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones, [SemVer](https://semver.org/lang/es/).
+Cada versión tiene su etiqueta `vX.Y.Z` y su [release en GitHub](https://github.com/dimasjavier0/lexflow-web/releases) con estas mismas notas.
 Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 
+Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](https://github.com/dimasjavier0/LexFlow-1.0). Las versiones anteriores a la 1.0.0 conservan solo las entradas que afectan a la web. La API está en [lexflow-api](https://github.com/dimasjavier0/lexflow-api).
+
 ## [Unreleased]
+
+## [1.0.0] - 2026-10-19
+
+Primera versión como repositorio propio, lista para desplegarse por separado de la API. Incluye todo lo publicado hasta la 0.6.0: inicio con nivel CEFR y colecciones, lecciones de imagen, audio y video, repaso espaciado, perfil con puntos y racha, «Mi progreso», selector de tema, panel admin e instalación como PWA.
 
 ### Added
 
 - Inicio de sesión con Facebook, junto al de Google. Facebook pide permiso para compartir tu lista de amigos, y la foto de la cuenta de Facebook se renueva en cada inicio de sesión, igual que la de Google.
 - Página «Amigos» (`/friends`, en la barra superior): tus amigos de Facebook que usan LexFlow, ordenados por cuántas palabras ha aprendido cada uno (las marcadas como aprendidas y las dominadas en el repaso, igual que en «Mi progreso»), contigo resaltado en la lista. No hay chat: solo se ve el nombre, la foto y la cifra. Si entraste con Google, «Conectar con Facebook» vincula tu cuenta desde ahí; si no compartiste la lista de amigos, «Permitir ver mis amigos» vuelve a pedir el permiso.
-- La API guarda las amistades al entrar con Facebook (`POST /me/facebook`, con el token de Facebook de ese inicio de sesión) y las devuelve con las palabras aprendidas de cada amigo (`GET /me/friends`).
 - Logo nuevo: una gota coral con la L dentro. Aparece junto al nombre en la cabecera y en el inicio de sesión, en la pestaña del navegador y como icono al instalar la app.
 - Barra de progreso en las operaciones del panel admin que recorren varias palabras o imágenes: la lista rápida, «Completar imágenes y sonido» (al buscar y al guardar), «Reparar imágenes» (general y sobre la selección) y «Reemplazar» o «Buscar imágenes» sobre la selección. Muestra cuántas van, la última palabra procesada y el recuento hasta el momento: con imágenes, sin imágenes, sin pronunciación, reparadas o no recuperadas.
 - El aviso final de la lista rápida indica también cuántas palabras quedaron sin imágenes.
-- Los endpoints de esas operaciones envían el avance línea a línea (NDJSON) cuando la petición lleva `Accept: application/x-ndjson`; sin esa cabecera responden como antes.
-
 - La lista rápida acepta el nivel de cada palabra como tercer campo: `cat, gato, A1`. Es opcional; sin él la palabra se crea en A1. Un nivel que no sea A1, A2, B1, B2, C1 o C2 marca la línea como inválida, y las palabras que ya existen conservan el suyo.
 - En el repaso, al fallar una palabra aparece «Reintentar»: se puede escribir otra vez antes de ver la solución, y acertar al segundo intento da 1 punto. «Ver la respuesta» la da por fallada.
 - Botón «Eliminar» en cada colección del panel admin. No borra al pulsarlo: abre un diálogo que nombra la colección, indica cuántas palabras se van con ella y pide confirmar con «Sí, eliminar colección».
@@ -30,6 +34,7 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 - Con palabras seleccionadas que no tienen imágenes, el botón pasa a llamarse «Buscar imágenes», actúa sin pedir confirmación y avisa con «Imágenes añadidas a N palabras».
 - Mientras se aplica una acción a las palabras seleccionadas, sus casillas quedan bloqueadas.
 - En el panel admin, al elegir un filtro de palabras («Sin significado», «Sin imágenes» o «Sin sonido») se despliegan solas las colecciones que tienen palabras que coinciden y se pliegan las demás, sin tener que abrir cada colección para ver el resultado.
+- La web es un repositorio propio: se arranca con `npm run dev` desde su raíz, que guarda su propio `.env` con las variables `VITE_*`. `npm run build` deja la web estática en `dist/`, y `npm run preview` la sirve en local.
 
 ### Fixed
 
@@ -41,7 +46,6 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 
 ### Added
 
-- Las imágenes de Pixabay se descargan a `apps/api/uploads` al guardarlas (palabra nueva o editada, lista rápida, «Completar imágenes y sonido» y portadas de colección).
 - Botón «Reparar imágenes» en el panel admin (`POST /admin/images/repair`): vuelve a pedir cada imagen caducada por su id de Pixabay y la guarda en el servidor, hasta 80 por pulsación. Las portadas de colección caducadas no conservan id, así que se sustituyen por el primer resultado para el nombre de la colección.
 - Las palabras de una colección se pueden seleccionar, una a una o todas, para publicarlas, pasarlas a borrador, reparar, reemplazar o eliminar sus imágenes, o quitarlas de la colección (`POST /admin/collections/:collectionId/words/actions`, hasta 200 palabras por acción).
 - Buscador de videos por fuente en el editor de palabras: YouGlish, Pixabay, Pexels, Dailymotion, Wikimedia y YouTube (`GET /admin/videos/search`).
@@ -52,12 +56,10 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 
 ### Changed
 
-- Al eliminar una imagen se borra también su archivo en `uploads` si nada más lo usa.
 - El changelog se reorganizó por versiones con fecha.
 
 ### Fixed
 
-- Las imágenes de Pixabay dejaban de verse al día siguiente y mostraban «This URL is invalid or has expired»: se guardaba el enlace temporal `pixabay.com/get/...`, que Pixabay solo mantiene 24 horas.
 - En móvil, la fila de una palabra con varias insignias ocultaba el término.
 - Se restauraron archivos que el editor había sobrescrito con versiones antiguas.
 
@@ -70,7 +72,6 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 - Selección de nivel CEFR en inicio y lecciones (`?level=`), recordada entre visitas.
 - Las lecciones empiezan solo con las palabras pendientes y las tarjetas de inicio muestran el avance del estudiante.
 - El panel permite eliminar colecciones, quitar palabras de una colección (también desde su fila) y asociar audio por URL.
-- La API restringe CORS mediante `CORS_ORIGINS` y limita las peticiones por IP.
 - Las palabras admiten categoría gramatical, frecuencia de uso, oraciones de ejemplo y relaciones (sinónimos, antónimos, derivadas…).
 - Repaso espaciado SM-2 para las palabras marcadas «Quiero aprender», con una pantalla de repaso imagen → audio → escribir la palabra.
 - Perfil del estudiante con nombre y avatar, puntos, nivel y racha diaria, y página «Mi progreso».
@@ -83,20 +84,16 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 
 - La interfaz web se migró a utilidades Tailwind v4 con tokens de marca en `@theme` y componentes compartidos en `components/ui` (Button, Field, Modal, Switch, Badge, Alert, Toast, EmptyState).
 - El panel admin se dividió en `features/admin` (hook de datos, filas de colección y palabra, modales y editor) y todas las llamadas pasan por `lib/api.ts` y `lib/admin-api.ts`.
-- Las rutas `/admin` de la API se agrupan en un router con autenticación única; Pixabay y Piper viven en `services/`.
 - El flujo de aprendizaje añade atajos de teclado, pantalla de fin de colección, reintentos y video embebido.
 - El selector de imágenes separa la búsqueda en Pixabay de las URL manuales, y el editor de palabras permite borrar sonidos.
 - Crear y editar una colección comparten el mismo formulario.
 
 ### Fixed
 
-- Las rutas de búsqueda en Pixabay y de generación de audio no estaban registradas en la API (404).
 - Recargar `/admin` redirigía a un administrador al inicio, y cada refresco de token cerraba los formularios abiertos.
 - Añadir palabras a una colección sin abrir dejaba la lista incompleta; confirmar contenido faltante la dejaba vacía.
 - El formulario de palabra rápida mostraba un error tras guardar correctamente.
 - Un fallo al guardar el progreso sustituía la lección completa por una pantalla de error.
-- Reutilizar una palabra existente en otra colección la despublicaba.
-- El enriquecimiento automático pedía a Pixabay un tamaño de página que la API rechaza.
 
 ## [0.4.0] - 2026-10-06
 
@@ -132,10 +129,7 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 
 - Base del monorepo con npm workspaces: aplicaciones `@lexflow/web` y `@lexflow/api`, y paquetes `@lexflow/shared`, `@lexflow/schemas` y `@lexflow/config`.
 - Esqueleto React/Vite/Tailwind, rutas iniciales y contexto de autenticación.
-- Esqueleto Express con endpoint `GET /health`.
 - Plantilla de variables de entorno y documentación inicial.
-- Schema Prisma inicial, contratos Zod para colecciones, palabras y progreso, y Docker Compose para PostgreSQL (puerto `5433`).
-- Migración inicial y seed idempotente con la colección A1 `food` y tres palabras de ejemplo.
 - Login con Google mediante Supabase Auth, validación del JWT en la API y sincronización del usuario local.
 - Flujo de aprendizaje por colección con progreso persistente por usuario y palabra.
 - Panel admin para colecciones, palabras, publicación y recursos multimedia por URL.
@@ -147,5 +141,7 @@ Cómo y cuándo se actualiza este archivo está en [CLAUDE.md](CLAUDE.md).
 - Datos en MVP: `fetch` nativo; TanStack Query queda para una segunda versión.
 - Estado global: React Context.
 - Formularios: React Hook Form con Zod.
-- Datos: UUID, relación muchos-a-muchos entre colecciones y palabras, traducción española única e `isPublished`.
-- Prisma ORM 7: ESM, `prisma.config.ts`, cliente generado localmente y adaptador PostgreSQL; el `.env` de la raíz se carga con ruta absoluta.
+
+[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.0.0
+[0.6.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v0.6.0
