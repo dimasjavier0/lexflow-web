@@ -6,10 +6,3 @@ coverage/
 !.env.example
 *.log
 .DS_Store
-apps/api/uploads/
-apps/api/models/piper/
-
-# Prisma
-apps/api/prisma/dev.db
-apps/api/prisma/dev.db-journal
-apps/api/src/generated/prisma/

@@ -1,11 +1,17 @@
 {
-  "name": "@lexflow/web",
-  "version": "0.1.0",
+  "name": "lexflow-web",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=11.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "check": "tsc -b --pretty false"
+    "check": "tsc -b --pretty false",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",
@@ -19,7 +25,9 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "typescript": "^5.9.3",
     "vite": "^8.3.0"
   }
 }
