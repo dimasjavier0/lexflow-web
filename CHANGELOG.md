@@ -11,8 +11,14 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ### Added
 
+- Preparación para Google Play: guías para generar la app de Android con Bubblewrap y para rellenar la ficha de Play Store (textos, formulario de seguridad de los datos, clasificación y acceso de los revisores), con el gráfico destacado y cuatro capturas de móvil. Con las variables `ANDROID_PACKAGE_ID` y `ANDROID_SHA256_CERT_FINGERPRINTS`, la web publica `/.well-known/assetlinks.json`, para que la app se abra a pantalla completa sin la barra del navegador.
 - Política de privacidad (`/privacy`), términos de uso (`/terms`) y una página que explica cómo eliminar la cuenta desde la app o por correo (`/delete-account`). Son públicas, sin iniciar sesión, porque Google Play y Facebook piden sus enlaces. Se llega a ellas desde un pie de página nuevo en todas las pantallas de la app, y el inicio de sesión indica que al continuar se aceptan los términos y la política de privacidad.
 - «Eliminar mi cuenta», al final de «Mi progreso»: tras confirmar en un diálogo que enumera lo que se borra, elimina tu inicio de sesión, tu perfil, tu progreso, tus puntos y tus amistades, cierra la sesión y lo confirma en la pantalla de inicio de sesión. No se puede deshacer.
+
+### Changed
+
+- La app abre sin conexión: muestra lo ya visitado y cada pantalla avisa si necesita internet, en lugar de la página de error del navegador.
+- Al instalarla, la app se llama «LexFlow English», aparece en la categoría de educación y la barra de estado usa el color de fondo de la app.
 
 ## [1.0.0] - 2026-10-19
 
