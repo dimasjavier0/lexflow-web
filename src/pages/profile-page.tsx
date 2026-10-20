@@ -146,7 +146,7 @@ export function ProfilePage() {
 
       <section className="mt-6 rounded-2xl border border-danger/40 bg-surface p-4 shadow-card sm:p-6" aria-labelledby="delete-account-heading">
         <h2 id="delete-account-heading" className="mb-2 text-xl font-bold tracking-tight">Eliminar mi cuenta</h2>
-        <p className="mt-0 mb-4 text-sm text-muted">Borra tu cuenta y todos tus datos de LexFlow: perfil, progreso, puntos y amistades. No se puede deshacer.</p>
+        <p className="mt-0 mb-4 text-sm text-muted">Borra tu cuenta y todos tus datos de LexFlow: perfil, progreso, puntos y amistades. No se puede deshacer. <Link className="font-semibold text-teal-dark underline-offset-2 hover:underline" to="/delete-account">Más información</Link></p>
         <Button variant="danger" onClick={() => setIsDeleting(true)}>Eliminar mi cuenta</Button>
       </section>
       {isDeleting ? <DeleteAccountModal onClose={() => setIsDeleting(false)} /> : null}

@@ -5,6 +5,7 @@ import { ThemeSwitcher } from "../components/theme-switcher";
 import { Button, buttonClasses } from "../components/ui";
 import { useAuth } from "../contexts/auth-context";
 import { cn } from "../lib/cn";
+import { LEGAL_LINKS } from "../lib/legal";
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -49,6 +50,12 @@ export function AppLayout({ children, topbar, width = "wide", className }: AppLa
       <div className={cn("mx-auto", WIDTH_CLASSES[width])}>
         {topbar ?? <AppTopbar />}
         <main>{children}</main>
+        <footer className="mt-16 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line pt-4 text-xs text-muted">
+          <span>LexFlow English</span>
+          <nav className="flex flex-wrap gap-x-4 gap-y-1" aria-label="Información legal">
+            {LEGAL_LINKS.map((link) => <Link key={link.to} className="text-muted underline-offset-2 hover:text-ink hover:underline" to={link.to}>{link.label}</Link>)}
+          </nav>
+        </footer>
       </div>
     </div>
   );

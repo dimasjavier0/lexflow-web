@@ -1,5 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { FriendsPage } from "./pages/friends-page";
+import { DeleteAccountPage } from "./pages/legal/delete-account-page";
+import { PrivacyPage } from "./pages/legal/privacy-page";
+import { TermsPage } from "./pages/legal/terms-page";
 import { LoginPage } from "./pages/login-page";
 import { HomePage } from "./pages/home-page";
 import { LearnPage } from "./pages/learn-page";
@@ -14,6 +17,9 @@ export function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/delete-account" element={<DeleteAccountPage />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/learn/:collectionSlug" element={<LearnPage />} />
         <Route path="/review" element={<ReviewPage />} />

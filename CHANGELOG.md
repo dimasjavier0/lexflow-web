@@ -11,6 +11,7 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ### Added
 
+- Política de privacidad (`/privacy`), términos de uso (`/terms`) y una página que explica cómo eliminar la cuenta desde la app o por correo (`/delete-account`). Son públicas, sin iniciar sesión, porque Google Play y Facebook piden sus enlaces. Se llega a ellas desde un pie de página nuevo en todas las pantallas de la app, y el inicio de sesión indica que al continuar se aceptan los términos y la política de privacidad.
 - «Eliminar mi cuenta», al final de «Mi progreso»: tras confirmar en un diálogo que enumera lo que se borra, elimina tu inicio de sesión, tu perfil, tu progreso, tus puntos y tus amistades, cierra la sesión y lo confirma en la pantalla de inicio de sesión. No se puede deshacer.
 
 ## [1.0.0] - 2026-10-19

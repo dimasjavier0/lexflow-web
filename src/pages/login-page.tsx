@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { BrandMark } from "../components/brand-mark";
 import { StatusPage } from "../components/status-page";
 import { Alert, Button } from "../components/ui";
@@ -35,6 +35,9 @@ export function LoginPage() {
           </Button>
         </div>
         {error ? <Alert className="mt-4 text-left">{error}</Alert> : null}
+        <p className="mt-5 mb-0 text-xs leading-normal text-muted">
+          Al continuar aceptas los <Link className="font-semibold text-teal-dark underline-offset-2 hover:underline" to="/terms">términos de uso</Link> y la <Link className="font-semibold text-teal-dark underline-offset-2 hover:underline" to="/privacy">política de privacidad</Link>.
+        </p>
       </section>
     </AuthLayout>
   );
