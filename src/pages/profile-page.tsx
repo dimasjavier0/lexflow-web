@@ -85,7 +85,7 @@ export function ProfilePage() {
           <h1 className="mt-1 mb-0 truncate text-4xl font-bold tracking-tighter sm:text-5xl">{displayName}</h1>
           <p className="mt-1 mb-0 text-sm text-muted">{user.email}</p>
         </div>
-        {review.due ? <Link className={buttonClasses()} to="/review">Repasar {review.due} {review.due === 1 ? "palabra" : "palabras"}</Link> : null}
+        {review.due ? <Link className={cn(buttonClasses(), "basis-full sm:basis-auto")} to="/review">Repasar {review.due} {review.due === 1 ? "palabra" : "palabras"}</Link> : null}
       </header>
 
       <dl className="m-0 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
