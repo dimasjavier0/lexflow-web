@@ -11,12 +11,12 @@ Versión actual: **1.0.0**. El historial por versiones está en [CHANGELOG.md](C
 ```text
 src/
   app.tsx           Rutas
-  pages/            Inicio, login, aprender, repasar, perfil, amigos
+  pages/            Inicio, login, aprender, repasar, perfil, amigos; pages/legal, privacidad, términos y borrado de cuenta
   features/         Panel admin, progreso y ejercicio de repaso
   components/       Componentes de la app; components/ui es el sistema de componentes propio
   layouts/          Marcos de la app, el panel admin y el login
   contexts/         Sesión de Supabase
-  lib/              Cliente HTTP (api.ts, admin-api.ts), tema, niveles, utilidades
+  lib/              Cliente HTTP (api.ts, admin-api.ts), tema, niveles, contacto legal (legal.ts), utilidades
 public/             Manifest, service worker e iconos de la PWA
 ```
 
@@ -74,6 +74,8 @@ La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
 - Repaso espaciado (SM-2) en `/review`: imagen, audio y escribir la palabra, con cuatro niveles de ayuda y un reintento antes de ver la solución.
 - Perfil con puntos, nivel y racha en `/profile`, y «Mi progreso» con palabras por nivel de repaso y repasos previstos.
 - Amigos de Facebook en `/friends`: cuántas palabras ha aprendido cada amigo que también usa LexFlow, sin chat. «Conectar con Facebook» vincula la cuenta a quien entró con Google. La configuración de Facebook y Supabase está en el README de la API.
+- «Eliminar mi cuenta» en `/profile`: borra la cuenta y todos sus datos con `DELETE /me` de la API, tras confirmarlo en un diálogo.
+- Páginas públicas de política de privacidad (`/privacy`), términos de uso (`/terms`) y borrado de cuenta (`/delete-account`), enlazadas desde el pie de la app y el inicio de sesión. Son las URL que piden Google Play y Facebook. El correo de contacto y la fecha de la última actualización están en `src/lib/legal.ts`: cambia la fecha cada vez que cambie el texto.
 - Selector de tema con tonos de color y modo oscuro.
 - Manifest, service worker e iconos (SVG y PNG de 192 y 512 px) para instalarla como PWA.
 - Panel admin en `/admin` (requiere `role = 'ADMIN'` en la base de la API):
