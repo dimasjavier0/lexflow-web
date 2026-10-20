@@ -6,3 +6,11 @@ coverage/
 !.env.example
 *.log
 .DS_Store
+
+# Android (Trusted Web Activity): Bubblewrap genera el proyecto; ver docs/android.md
+android/*
+!android/twa-manifest.json
+*.keystore
+*.jks
+*.aab
+*.apk

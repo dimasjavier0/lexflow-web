@@ -1,6 +1,6 @@
 # LexFlow Web
 
-Cliente web de LexFlow, la plataforma para aprender vocabulario de inglés mediante imagen, audio y contexto. React 19, Vite 8 y Tailwind CSS 4, con inicio de sesión de Supabase. Se instala como PWA.
+Cliente web de LexFlow, la plataforma para aprender vocabulario de inglés mediante imagen, audio y contexto. React 19, Vite 8 y Tailwind CSS 4, con inicio de sesión de Supabase. Se instala como PWA y se publica en Google Play como Trusted Web Activity (ver [Android y Google Play](#android-y-google-play)).
 
 Necesita la API de [lexflow-api](https://github.com/dimasjavier0/lexflow-api). Hasta la versión 0.6.0, ambas vivían en el monorepo [LexFlow-1.0](https://github.com/dimasjavier0/LexFlow-1.0).
 
@@ -18,6 +18,7 @@ src/
   contexts/         Sesión de Supabase
   lib/              Cliente HTTP (api.ts, admin-api.ts), tema, niveles, contacto legal (legal.ts), utilidades
 public/             Manifest, service worker e iconos de la PWA
+docs/               Guías de la app de Android y de la ficha de Google Play, con sus gráficos
 ```
 
 ## Requisitos
@@ -63,6 +64,7 @@ En el `.env` de la raíz; la plantilla es [.env.example](.env.example). Vite sol
 | `VITE_SUPABASE_URL`          | Proyecto de Supabase.                                                                        |
 | `VITE_SUPABASE_ANON_KEY`     | Clave pública (anon) de Supabase.                                                            |
 | `VITE_DAILYMOTION_PLAYER_ID` | Opcional: reproductor propio de Dailymotion. Sin él, sus videos se abren en dailymotion.com. |
+| `ANDROID_PACKAGE_ID`, `ANDROID_SHA256_CERT_FINGERPRINTS` | Opcionales: id de la app de Google Play y huellas SHA-256 de sus certificados (separadas por comas). Con las dos, el build publica `/.well-known/assetlinks.json`. Sin prefijo `VITE_`: no llegan al navegador. Ver [docs/android.md](docs/android.md). |
 
 La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
 
@@ -77,7 +79,7 @@ La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
 - «Eliminar mi cuenta» en `/profile`: borra la cuenta y todos sus datos con `DELETE /me` de la API, tras confirmarlo en un diálogo.
 - Páginas públicas de política de privacidad (`/privacy`), términos de uso (`/terms`) y borrado de cuenta (`/delete-account`), enlazadas desde el pie de la app y el inicio de sesión. Son las URL que piden Google Play y Facebook. El correo de contacto y la fecha de la última actualización están en `src/lib/legal.ts`: cambia la fecha cada vez que cambie el texto.
 - Selector de tema con tonos de color y modo oscuro.
-- Manifest, service worker e iconos (SVG y PNG de 192 y 512 px) para instalarla como PWA.
+- Manifest, service worker e iconos (SVG y PNG de 192 y 512 px) para instalarla como PWA. Sin conexión abre con lo ya visitado.
 - Panel admin en `/admin` (requiere `role = 'ADMIN'` en la base de la API):
   - Colecciones y palabras expandibles, con filtros «Sin significado», «Sin imágenes» y «Sin sonido».
   - Editor de palabras: término, traducción, nivel, imágenes (arrastre, URL o Pixabay), audios, videos, categoría gramatical, frecuencia, oraciones de ejemplo y palabras relacionadas.
@@ -85,6 +87,15 @@ La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
   - Vista previa de las imágenes y la pronunciación que faltan en una colección.
   - Acciones sobre varias palabras y reparación de imágenes caducadas, con barra de progreso.
   - Buscador de videos (YouGlish, Pixabay, Pexels, Dailymotion, Wikimedia y YouTube) y de grabaciones de la pronunciación, y pronunciación generada con Piper.
+
+## Android y Google Play
+
+La app de Android es esta misma web dentro de una Trusted Web Activity generada con Bubblewrap: los despliegues de la web llegan a la app sin publicar una versión nueva.
+
+- [docs/android.md](docs/android.md): generar, firmar y compilar el AAB, y enlazar la app con el dominio (`assetlinks.json`).
+- [docs/play-store.md](docs/play-store.md): textos de la ficha, gráficos, formulario de seguridad de los datos, clasificación y acceso para los revisores.
+
+Play exige una política de privacidad y una forma de borrar la cuenta desde la app y desde la web: son `/privacy`, `/delete-account` y «Eliminar mi cuenta» en `/profile`.
 
 ## Lista rápida
 
