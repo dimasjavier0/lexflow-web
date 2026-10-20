@@ -9,6 +9,10 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ## [Unreleased]
 
+### Added
+
+- «Eliminar mi cuenta», al final de «Mi progreso»: tras confirmar en un diálogo que enumera lo que se borra, elimina tu inicio de sesión, tu perfil, tu progreso, tus puntos y tus amistades, cierra la sesión y lo confirma en la pantalla de inicio de sesión. No se puede deshacer.
+
 ## [1.0.0] - 2026-10-19
 
 Primera versión como repositorio propio, lista para desplegarse por separado de la API. Incluye todo lo publicado hasta la 0.6.0: inicio con nivel CEFR y colecciones, lecciones de imagen, audio y video, repaso espaciado, perfil con puntos y racha, «Mi progreso», selector de tema, panel admin e instalación como PWA.

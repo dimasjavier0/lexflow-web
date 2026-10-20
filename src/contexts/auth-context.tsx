@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { errorMessage } from "../hooks/use-async-action";
-import { getCurrentUser, syncFacebookFriends, type ApiUser } from "../lib/api";
+import { deleteAccount as deleteApiAccount, getCurrentUser, syncFacebookFriends, type ApiUser } from "../lib/api";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -20,6 +20,10 @@ type AuthContextValue = {
   /** Links Facebook to the signed-in account, or asks again for the friend list when it is already linked. */
   connectFacebook: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** Deletes the account in the API and forgets the session on this device. */
+  deleteAccount: () => Promise<void>;
+  /** The account was just deleted; the login screen says so. */
+  wasAccountDeleted: boolean;
 };
 type UserSync = { userId: string; apiUser: ApiUser | null; error: string | null };
 type FacebookSync = { userId: string; isPending: boolean; error: string | null };
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [sync, setSync] = useState<UserSync | null>(null);
   const [facebookSync, setFacebookSync] = useState<FacebookSync | null>(null);
+  const [wasAccountDeleted, setWasAccountDeleted] = useState(false);
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const userId = session?.user.id ?? null;
@@ -171,6 +176,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
 
+  const deleteAccount = async () => {
+    const current = sessionRef.current;
+    if (!current) return;
+    await deleteApiAccount(current);
+    setWasAccountDeleted(true);
+    // The sign-in no longer exists in Supabase, so only the copy kept on this device is left to clear.
+    await supabase.auth.signOut({ scope: "local" });
+  };
+
   const value = useMemo(
     () => ({
       isAuthenticated: session !== null,
@@ -186,8 +200,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithFacebook,
       connectFacebook,
       signOut,
+      deleteAccount,
+      wasAccountDeleted: wasAccountDeleted && session === null,
     }),
-    [apiUser, facebookSyncError, isLoading, isSyncingFacebook, isSyncingUser, session, syncError],
+    [apiUser, facebookSyncError, isLoading, isSyncingFacebook, isSyncingUser, session, syncError, wasAccountDeleted],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

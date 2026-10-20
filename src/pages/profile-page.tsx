@@ -4,6 +4,7 @@ import { Avatar } from "../components/avatar";
 import { StatusPage } from "../components/status-page";
 import { Alert, Button, buttonClasses, Eyebrow, Field, Input } from "../components/ui";
 import { useAuth } from "../contexts/auth-context";
+import { DeleteAccountModal } from "../features/account/delete-account-modal";
 import { MemoryInsights } from "../features/progress/memory-insights";
 import { VocabularyJourney } from "../features/progress/vocabulary-journey";
 import { errorMessage, useAsyncAction } from "../hooks/use-async-action";
@@ -35,6 +36,7 @@ export function ProfilePage() {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isSaved, setIsSaved] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const save = useAsyncAction();
 
   useEffect(() => {
@@ -141,6 +143,13 @@ export function ProfilePage() {
           {save.error ? <Alert className="sm:col-span-2">{save.error}</Alert> : null}
         </form>
       </section>
+
+      <section className="mt-6 rounded-2xl border border-danger/40 bg-surface p-4 shadow-card sm:p-6" aria-labelledby="delete-account-heading">
+        <h2 id="delete-account-heading" className="mb-2 text-xl font-bold tracking-tight">Eliminar mi cuenta</h2>
+        <p className="mt-0 mb-4 text-sm text-muted">Borra tu cuenta y todos tus datos de LexFlow: perfil, progreso, puntos y amistades. No se puede deshacer.</p>
+        <Button variant="danger" onClick={() => setIsDeleting(true)}>Eliminar mi cuenta</Button>
+      </section>
+      {isDeleting ? <DeleteAccountModal onClose={() => setIsDeleting(false)} /> : null}
     </AppLayout>
   );
 }
