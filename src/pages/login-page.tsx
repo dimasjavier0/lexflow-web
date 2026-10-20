@@ -7,7 +7,7 @@ import { useAsyncAction } from "../hooks/use-async-action";
 import { AuthLayout } from "../layouts/auth-layout";
 
 export function LoginPage() {
-  const { isAuthenticated, isLoading, signInWithGoogle, signInWithFacebook } = useAuth();
+  const { isAuthenticated, isLoading, signInWithGoogle, signInWithFacebook, wasAccountDeleted } = useAuth();
   const google = useAsyncAction();
   const facebook = useAsyncAction();
   const error = google.error ?? facebook.error;
@@ -23,6 +23,7 @@ export function LoginPage() {
           <span>abc</span>
           <strong className="text-3xl text-coral">+</strong>
         </div>
+        {wasAccountDeleted ? <Alert tone="success" className="mb-6 text-left">Tu cuenta y todos tus datos se han eliminado.</Alert> : null}
         <h1 className="m-0 text-4xl leading-none font-bold tracking-tighter">Aprende palabras en contexto.</h1>
         <p className="mt-3.5 mb-6 leading-normal text-muted">Inicia sesión para continuar con tu aprendizaje.</p>
         <div className="grid gap-3">

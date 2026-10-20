@@ -272,6 +272,16 @@ export async function updateProfile(session: Session, input: { name: string | nu
   return body.user;
 }
 
+/** Deletes the learner's account for good: sign-in, profile, progress, points and friendships. */
+export async function deleteAccount(session: Session): Promise<void> {
+  await apiRequest("/me", {
+    method: "DELETE",
+    session,
+    errorMessage: "No se pudo eliminar tu cuenta. Inténtalo de nuevo más tarde.",
+    statusMessages: { 503: "Ahora mismo no se pueden eliminar cuentas desde la app. Sigue los pasos de «Eliminar cuenta» para pedirlo por correo." },
+  });
+}
+
 /** Sends the Facebook token of a sign-in that just came back, so the API reads who the learner's friends are. */
 export async function syncFacebookFriends(session: Session, accessToken: string): Promise<void> {
   await apiRequest("/me/facebook", {
