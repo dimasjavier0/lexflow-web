@@ -9,6 +9,8 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-20
+
 ### Added
 
 - Preparación para Google Play: guías para generar la app de Android con Bubblewrap y para rellenar la ficha de Play Store (textos, formulario de seguridad de los datos, clasificación y acceso de los revisores), con el gráfico destacado y cuatro capturas de móvil. Con las variables `ANDROID_PACKAGE_ID` y `ANDROID_SHA256_CERT_FINGERPRINTS`, la web publica `/.well-known/assetlinks.json`, para que la app se abra a pantalla completa sin la barra del navegador.
@@ -157,6 +159,7 @@ Primera versión como repositorio propio, lista para desplegarse por separado de
 - Estado global: React Context.
 - Formularios: React Hook Form con Zod.
 
-[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.1.0
 [1.0.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.0.0
 [0.6.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v0.6.0
