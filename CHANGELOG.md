@@ -20,6 +20,10 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 - La app abre sin conexión: muestra lo ya visitado y cada pantalla avisa si necesita internet, en lugar de la página de error del navegador.
 - Al instalarla, la app se llama «LexFlow English», aparece en la categoría de educación y la barra de estado usa el color de fondo de la app.
 
+### Fixed
+
+- En el móvil, la cabecera de «Mi progreso» cortaba el nombre a la primera letra cuando había palabras por repasar; ahora el botón «Repasar» pasa a su propia fila.
+
 ## [1.0.0] - 2026-10-19
 
 Primera versión como repositorio propio, lista para desplegarse por separado de la API. Incluye todo lo publicado hasta la 0.6.0: inicio con nivel CEFR y colecciones, lecciones de imagen, audio y video, repaso espaciado, perfil con puntos y racha, «Mi progreso», selector de tema, panel admin e instalación como PWA.
