@@ -9,6 +9,10 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ## [Unreleased]
 
+### Added
+
+- Despliegue en AWS: cada push a `main` compila la web y la publica en S3 detrás de CloudFront, con la API en `/api` del mismo dominio. El flujo de GitHub Actions entra en AWS con un rol temporal, sin claves.
+
 ## [1.1.0] - 2026-10-20
 
 ### Added

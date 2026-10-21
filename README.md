@@ -60,7 +60,7 @@ En el `.env` de la raíz; la plantilla es [.env.example](.env.example). Vite sol
 
 | Variable                     | Uso                                                                                          |
 | ---------------------------- | -------------------------------------------------------------------------------------------- |
-| `VITE_API_URL`               | URL base de la API.                                                                          |
+| `VITE_API_URL`               | URL base de la API. En producción, `/api`: CloudFront la sirve desde el mismo dominio.       |
 | `VITE_SUPABASE_URL`          | Proyecto de Supabase.                                                                        |
 | `VITE_SUPABASE_ANON_KEY`     | Clave pública (anon) de Supabase.                                                            |
 | `VITE_DAILYMOTION_PLAYER_ID` | Opcional: reproductor propio de Dailymotion. Sin él, sus videos se abren en dailymotion.com. |
@@ -87,6 +87,20 @@ La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
   - Vista previa de las imágenes y la pronunciación que faltan en una colección.
   - Acciones sobre varias palabras y reparación de imágenes caducadas, con barra de progreso.
   - Buscador de videos (YouGlish, Pixabay, Pexels, Dailymotion, Wikimedia y YouTube) y de grabaciones de la pronunciación, y pronunciación generada con Piper.
+
+## Despliegue
+
+En producción la web es un sitio estático en un bucket S3 privado, servido por CloudFront con HTTPS. El mismo dominio sirve la API en `/api/*` y las imágenes y audios en `/uploads/*`, así que no hay CORS entre la web y la API. La infraestructura (AWS CDK), los costes, la seguridad y los pasos están en [docs/aws-deployment.md de lexflow-api](https://github.com/dimasjavier0/lexflow-api/blob/main/docs/aws-deployment.md).
+
+Cada push a `main` lo publica el flujo [.github/workflows/deploy.yml](.github/workflows/deploy.yml): `npm run check`, build con `VITE_API_URL=/api`, `aws s3 sync` (los assets con caché de un año; `index.html`, `sw.js` y el manifest sin caché) e invalidación de CloudFront. Entra en AWS con un rol temporal por OIDC, sin claves. Lo que necesita en GitHub:
+
+| Tipo     | Nombre                                                                 |
+| -------- | ---------------------------------------------------------------------- |
+| Secret   | `AWS_WEB_DEPLOY_ROLE_ARN` (salida `WebDeployRoleArn` del stack)        |
+| Variable | `WEB_BUCKET`, `DISTRIBUTION_ID` (salidas del stack)                    |
+| Variable | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, y opcionales `VITE_DAILYMOTION_PLAYER_ID`, `ANDROID_PACKAGE_ID`, `ANDROID_SHA256_CERT_FINGERPRINTS` |
+
+La URL y la clave anónima de Supabase son públicas por diseño (van dentro del JavaScript que descarga el navegador), pero se configuran en GitHub para que el repositorio no dependa de un proyecto concreto.
 
 ## Android y Google Play
 

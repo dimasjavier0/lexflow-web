@@ -1,0 +1,65 @@
+# Checks every push and pull request; on main builds the web and publishes it to the S3
+# bucket behind CloudFront (see docs/aws-deployment.md in lexflow-api). AWS access is a
+# short-lived role assumed through GitHub's OIDC token: there are no access keys.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run check
+
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Build
+        env:
+          # Same domain as the API: CloudFront sends /api/* to it.
+          VITE_API_URL: /api
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_DAILYMOTION_PLAYER_ID: ${{ vars.VITE_DAILYMOTION_PLAYER_ID }}
+          ANDROID_PACKAGE_ID: ${{ vars.ANDROID_PACKAGE_ID }}
+          ANDROID_SHA256_CERT_FINGERPRINTS: ${{ vars.ANDROID_SHA256_CERT_FINGERPRINTS }}
+        run: npm run build
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_WEB_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+          mask-aws-account-id: true
+      - name: Publish
+        env:
+          WEB_BUCKET: ${{ vars.WEB_BUCKET }}
+          DISTRIBUTION_ID: ${{ vars.DISTRIBUTION_ID }}
+        run: |
+          # Hashed assets never change; everything else must be revalidated on each visit.
+          aws s3 sync dist/assets "s3://$WEB_BUCKET/assets" --delete --cache-control "public, max-age=31536000, immutable"
+          aws s3 sync dist "s3://$WEB_BUCKET" --delete --exclude "assets/*" --cache-control "no-cache"
+          aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/index.html" "/sw.js" "/manifest.webmanifest" "/.well-known/*" > /dev/null
