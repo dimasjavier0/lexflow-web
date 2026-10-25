@@ -169,15 +169,27 @@ function levelQuery(level: CefrLevel | null): string {
   return level ? `?level=${level}` : "";
 }
 
-export type CollectionCatalog = {
+/** One CEFR level of the home catalogue: its distinct words and the topic collections that have words of it. */
+export type CatalogLevel = {
+  level: CefrLevel;
+  /** Different words of this level; a word in two collections counts once. */
+  words: number;
+  /** `_count.words` counts only this level's words. */
   collections: ApiCollectionSummary[];
-  /** Levels that have at least one published word, for the level selector. */
-  levels: CefrLevel[];
 };
 
-/** Published collections, optionally narrowed (and counted) by CEFR level. */
-export async function getCollections(level: CefrLevel | null = null): Promise<CollectionCatalog> {
-  return apiRequest<CollectionCatalog>(`/collections${levelQuery(level)}`, { errorMessage: "No se pudieron cargar las colecciones." });
+/** The six CEFR levels in order, empty ones included. */
+export async function getLevelCatalog(): Promise<CatalogLevel[]> {
+  const body = await apiRequest<{ levels: CatalogLevel[] }>("/levels", { errorMessage: "No se pudieron cargar los niveles." });
+  return body.levels;
+}
+
+/** Words of a level the learner knows (learned, or mastered in review), in total and per collection id. */
+export type LevelProgress = { level: CefrLevel; known: number; collections: Record<string, number> };
+
+export async function getLevelProgress(session: Session): Promise<Record<CefrLevel, LevelProgress>> {
+  const body = await apiRequest<{ levels: LevelProgress[] }>("/progress/levels", { session, errorMessage: "No se pudo cargar tu progreso." });
+  return Object.fromEntries(body.levels.map((item) => [item.level, item])) as Record<CefrLevel, LevelProgress>;
 }
 
 export async function getCollection(slug: string, level: CefrLevel | null = null): Promise<ApiCollection> {
@@ -200,12 +212,6 @@ export async function updateProgress(session: Session, wordId: string, status: L
 export async function getProgress(session: Session): Promise<Record<string, LearningStatus>> {
   const body = await apiRequest<{ progress: Array<{ wordId: string; status: LearningStatus }> }>("/progress", { session, errorMessage: "No se pudo cargar tu progreso." });
   return Object.fromEntries(body.progress.map((item) => [item.wordId, item.status]));
-}
-
-/** Number of learned words per collection id. */
-export async function getProgressSummary(session: Session, level: CefrLevel | null = null): Promise<Record<string, number>> {
-  const body = await apiRequest<{ summary: Array<{ collectionId: string; learned: number }> }>(`/progress/summary${levelQuery(level)}`, { session, errorMessage: "No se pudo cargar tu progreso." });
-  return Object.fromEntries(body.summary.map((item) => [item.collectionId, item.learned]));
 }
 
 /** `hard`: right after seeing the translation. `retried`: right at the second attempt. */

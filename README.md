@@ -12,7 +12,7 @@ Versión actual: **1.1.0**. El historial por versiones está en [CHANGELOG.md](C
 src/
   app.tsx           Rutas
   pages/            Inicio, login, aprender, repasar, perfil, amigos; pages/legal, privacidad, términos y borrado de cuenta
-  features/         Panel admin, progreso y ejercicio de repaso
+  features/         Panel admin, catálogo por niveles, progreso y ejercicio de repaso
   components/       Componentes de la app; components/ui es el sistema de componentes propio
   layouts/          Marcos de la app, el panel admin y el login
   contexts/         Sesión de Supabase
@@ -71,7 +71,8 @@ La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
 ## Funcionalidades
 
 - Login con Google o Facebook mediante Supabase Auth.
-- Inicio con selección de nivel CEFR, colecciones con el avance del estudiante y búsqueda de palabras con autocompletado.
+- Inicio por niveles: un desplegable por cada nivel CEFR (A1, A2, B1, B2, C1, C2) con sus colecciones por temas, que abren la lección filtrada por ese nivel. Con sesión, cada nivel muestra qué porcentaje de sus palabras conoces («28 % para dominar A1») y cuántas faltan. Una palabra cuenta como conocida si la marcaste como aprendida o la dominaste en el repaso, igual que en «Mi progreso». Los niveles sin palabras aparecen como «Próximamente». Los niveles abiertos se recuerdan entre visitas. Datos: `GET /levels` y `GET /progress/levels` de la API (`src/features/catalog/level-section.tsx`).
+- Búsqueda de palabras con autocompletado desde el inicio.
 - Lecciones por colección (`/learn/:collectionSlug`): imágenes en cuadrícula, audio automático, video embebido y atajos de teclado. Cada palabra se marca como «Quiero aprender», «No me interesa» o «Aprendida», y las ya conocidas se omiten.
 - Repaso espaciado (SM-2) en `/review`: imagen, audio y escribir la palabra, con cuatro niveles de ayuda y un reintento antes de ver la solución.
 - Perfil con puntos, nivel y racha en `/profile`, y «Mi progreso» con palabras por nivel de repaso y repasos previstos.

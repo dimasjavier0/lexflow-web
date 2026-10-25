@@ -11,7 +11,13 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ### Added
 
+- El inicio se organiza por niveles: un desplegable para cada nivel, de A1 a C2, con sus colecciones por temas dentro. Cada nivel muestra tu progreso («28 % para dominar A1», con una barra y cuántas palabras faltan) y cada colección, cuántas de sus palabras de ese nivel ya conoces. Al abrir una colección, la lección muestra solo las palabras de ese nivel. Los niveles que aún no tienen palabras aparecen como «Próximamente».
 - Despliegue en AWS: cada push a `main` compila la web y la publica en S3 detrás de CloudFront, con la API en `/api` del mismo dominio. El flujo de GitHub Actions entra en AWS con un rol temporal, sin claves.
+
+### Changed
+
+- Las colecciones del inicio cuentan como aprendidas también las palabras dominadas en el repaso, igual que «Mi progreso». Antes solo contaban las marcadas como «Aprendida».
+- Los botones de nivel del inicio dejan paso a los desplegables por nivel.
 
 ## [1.1.0] - 2026-10-20
 

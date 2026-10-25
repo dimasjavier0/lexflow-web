@@ -38,7 +38,7 @@ export function CollectionCard({ collection, level = null, learnedCount }: Colle
       <div className="grid gap-4 px-6 pb-6">
         <div>
           <Eyebrow className="text-muted">Colección</Eyebrow>
-          <h2 className="mt-1.5 text-2xl font-bold tracking-tight">{collection.name}</h2>
+          <h3 className="mt-1.5 text-2xl font-bold tracking-tight">{collection.name}</h3>
           <p className="mt-2 line-clamp-2 text-sm leading-snug text-muted">{collection.description ?? "Colección de vocabulario"}</p>
         </div>
         <div className="grid gap-2">
