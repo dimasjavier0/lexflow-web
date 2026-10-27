@@ -79,6 +79,8 @@ La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
 - Amigos de Facebook en `/friends`: cuántas palabras ha aprendido cada amigo que también usa LexFlow, sin chat. «Conectar con Facebook» vincula la cuenta a quien entró con Google. La configuración de Facebook y Supabase está en el README de la API.
 - «Eliminar mi cuenta» en `/profile`: borra la cuenta y todos sus datos con `DELETE /me` de la API, tras confirmarlo en un diálogo.
 - Páginas públicas de política de privacidad (`/privacy`), términos de uso (`/terms`) y borrado de cuenta (`/delete-account`), enlazadas desde el pie de la app y el inicio de sesión. Son las URL que piden Google Play y Facebook. El correo de contacto y la fecha de la última actualización están en `src/lib/legal.ts`: cambia la fecha cada vez que cambie el texto.
+- «Sobre mí» (`/about`): quién hace LexFlow y por qué, con enlaces al portfolio, GitHub y LinkedIn. Los datos del autor están en `src/lib/site.ts`.
+- «Apoyar el proyecto» (`/donate`): donación voluntaria con PayPal, solo en la web. Dentro de la app de Google Play no aparece (su política de pagos no permite donaciones a particulares con pagos externos): `isAndroidApp()` en `src/lib/site.ts` la detecta por el referrer `android-app://` con el que Chrome abre la TWA.
 - Selector de tema con tonos de color y modo oscuro.
 - Manifest, service worker e iconos (SVG y PNG de 192 y 512 px) para instalarla como PWA. Sin conexión abre con lo ya visitado.
 - Panel admin en `/admin` (requiere `role = 'ADMIN'` en la base de la API):
