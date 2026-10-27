@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { AboutPage } from "./pages/about-page";
+import { DonatePage } from "./pages/donate-page";
 import { FriendsPage } from "./pages/friends-page";
 import { DeleteAccountPage } from "./pages/legal/delete-account-page";
 import { PrivacyPage } from "./pages/legal/privacy-page";
@@ -20,6 +22,8 @@ export function App() {
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/delete-account" element={<DeleteAccountPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/donate" element={<DonatePage />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/learn/:collectionSlug" element={<LearnPage />} />
         <Route path="/review" element={<ReviewPage />} />

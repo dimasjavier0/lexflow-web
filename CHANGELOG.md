@@ -11,6 +11,9 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ### Added
 
+- Página «Sobre mí» (`/about`): quién hace LexFlow, por qué existe y cómo está hecha, con enlaces al portfolio, GitHub, LinkedIn y el correo de contacto.
+- Página «Apoyar el proyecto» (`/donate`) para hacer una donación voluntaria con PayPal desde la web. En la app de Google Play no aparece. La política de privacidad menciona ahora a PayPal.
+- El pie de página enlaza «Sobre mí» y «Apoyar el proyecto».
 - Los términos de uso incluyen los créditos del vocabulario: las listas CEFR-J y Octanove C1/C2 en las que se basan las palabras y sus niveles, con su licencia, y el origen de las fotos, la pronunciación y los videos.
 - El inicio se organiza por niveles: un desplegable para cada nivel, de A1 a C2, con sus colecciones por temas dentro. Cada nivel muestra tu progreso («28 % para dominar A1», con una barra y cuántas palabras faltan) y cada colección, cuántas de sus palabras de ese nivel ya conoces. Al abrir una colección, la lección muestra solo las palabras de ese nivel. Los niveles que aún no tienen palabras aparecen como «Próximamente».
 - Despliegue en AWS: cada push a `main` compila la web y la publica en S3 detrás de CloudFront, con la API en `/api` del mismo dominio. El flujo de GitHub Actions entra en AWS con un rol temporal, sin claves.

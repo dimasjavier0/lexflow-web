@@ -13,6 +13,10 @@ Cómo se genera y se firma la app está en [android.md](android.md).
 - [ ] Una cuenta de Google de prueba para los revisores ([Acceso a la app](#acceso-a-la-app)).
 - [ ] Si la cuenta de desarrollador es personal y nueva: una prueba cerrada con al menos **12 testers durante 14 días seguidos** antes de poder pedir el acceso a producción. Empieza por ahí.
 
+## Donaciones
+
+La web tiene una página de donaciones con PayPal (`/donate`). La política de pagos de Google Play no permite pedir donaciones para particulares con sistemas de pago externos dentro de una app, así que en la app de Android esa página y su enlace no aparecen: `isAndroidApp()` (`src/lib/site.ts`) reconoce la TWA por el referrer `android-app://` con el que Chrome la abre. No declares donaciones ni compras en la ficha.
+
 ## URLs
 
 | Campo de Play Console                                  | Valor                                  |

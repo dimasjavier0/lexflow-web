@@ -38,6 +38,7 @@ export function PrivacyPage() {
           <li><strong>Supabase,</strong> que gestiona el inicio de sesión.</li>
           <li><strong>Google y Facebook,</strong> cuando eliges entrar con ellos. Cada uno aplica su propia política de privacidad.</li>
           <li><strong>El proveedor de alojamiento</strong> de los servidores de LexFlow, donde se guardan la base de datos y los archivos.</li>
+          <li><strong>PayPal,</strong> solo si decides hacer una donación desde la web: el pago ocurre en PayPal y LexFlow no recibe ni guarda los datos de tu tarjeta ni de tu cuenta.</li>
           <li><strong>Reproductores de video incrustados</strong> (YouGlish, YouTube, Dailymotion y otros) en algunas lecciones. Al reproducir un video, ese servicio puede guardar sus propias cookies según su política.</li>
         </ul>
         <p>Estos servicios pueden tratar datos fuera de tu país, con las garantías que exige la ley aplicable. También podríamos revelar datos si una autoridad lo exige legalmente.</p>
