@@ -31,7 +31,16 @@ export function TermsPage() {
       </LegalSection>
 
       <LegalSection title="Contenido">
-        <p>Las palabras, traducciones, ejemplos y la app son de LexFlow o de sus autores. Algunas imágenes, audios y videos provienen de servicios de terceros (como Pixabay, Wikimedia, YouGlish, YouTube o Dailymotion) y se muestran según sus licencias y condiciones. Si crees que algún contenido infringe tus derechos, escríbenos y lo revisaremos.</p>
+        <p>Las traducciones, los ejemplos y la app son de LexFlow o de sus autores. Algunas imágenes, audios y videos provienen de servicios de terceros (como Pixabay, Wikimedia, YouGlish, YouTube o Dailymotion) y se muestran según sus licencias y condiciones. Si crees que algún contenido infringe tus derechos, escríbenos y lo revisaremos.</p>
+      </LegalSection>
+
+      <LegalSection title="Créditos del vocabulario">
+        <p>Las listas de palabras y sus niveles se basan en:</p>
+        <ul>
+          <li><strong>The CEFR-J Wordlist Version 1.5</strong>, compilada por Yukio Tono, Tokyo University of Foreign Studies (<a href="http://www.cefr-j.org/download.html" target="_blank" rel="noreferrer">cefr-j.org</a>).</li>
+          <li><strong>Octanove Vocabulary Profile C1/C2 (ver. 1.0)</strong>, de Octanove Labs, bajo licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noreferrer">Creative Commons Atribución-CompartirIgual 4.0</a>.</li>
+        </ul>
+        <p>Ambas se obtuvieron de <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noreferrer">Open Language Profiles</a>. El vocabulario de LexFlow que deriva de ellas, con sus traducciones y temas, se comparte bajo la misma licencia CC BY-SA 4.0. Las fotos de las palabras son de <a href="https://pixabay.com" target="_blank" rel="noreferrer">Pixabay</a>, la pronunciación se genera con Piper y los videos de pronunciación los ofrece <a href="https://youglish.com" target="_blank" rel="noreferrer">YouGlish</a>.</p>
       </LegalSection>
 
       <LegalSection title="Sin garantías">
