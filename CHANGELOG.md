@@ -9,6 +9,8 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-27
+
 ### Added
 
 - Página «Sobre mí» (`/about`): quién hace LexFlow, por qué existe y cómo está hecha, con enlaces al portfolio, GitHub, LinkedIn y el correo de contacto.
@@ -173,7 +175,8 @@ Primera versión como repositorio propio, lista para desplegarse por separado de
 - Estado global: React Context.
 - Formularios: React Hook Form con Zod.
 
-[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.1.0
 [1.0.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.0.0
 [0.6.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v0.6.0
