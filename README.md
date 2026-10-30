@@ -64,13 +64,14 @@ En el `.env` de la raíz; la plantilla es [.env.example](.env.example). Vite sol
 | `VITE_SUPABASE_URL`          | Proyecto de Supabase.                                                                        |
 | `VITE_SUPABASE_ANON_KEY`     | Clave pública (anon) de Supabase.                                                            |
 | `VITE_DAILYMOTION_PLAYER_ID` | Opcional: reproductor propio de Dailymotion. Sin él, sus videos se abren en dailymotion.com. |
+| `VITE_FACEBOOK_LOGIN`        | Opcional: `true` activa el inicio de sesión y la conexión con Facebook. Sin ella, sus botones muestran «Esta función no está disponible». |
 | `ANDROID_PACKAGE_ID`, `ANDROID_SHA256_CERT_FINGERPRINTS` | Opcionales: id de la app de Google Play y huellas SHA-256 de sus certificados (separadas por comas). Con las dos, el build publica `/.well-known/assetlinks.json`. Sin prefijo `VITE_`: no llegan al navegador. Ver [docs/android.md](docs/android.md). |
 
 La API debe aceptar el origen de la web en su `CORS_ORIGINS`.
 
 ## Funcionalidades
 
-- Login con Google o Facebook mediante Supabase Auth.
+- Login con Google o Facebook mediante Supabase Auth. Facebook solo funciona si el build lleva `VITE_FACEBOOK_LOGIN=true`; si no, sus botones (en el inicio de sesión y en Amigos) abren una pantalla que avisa de que la función aún no está disponible (`src/lib/features.ts`, `src/components/feature-unavailable.tsx`). En producción está desactivado mientras se termina de configurar la app de Facebook.
 - Inicio por niveles: un desplegable por cada nivel CEFR (A1, A2, B1, B2, C1, C2) con sus colecciones por temas, que abren la lección filtrada por ese nivel. Con sesión, cada nivel muestra qué porcentaje de sus palabras conoces («28 % para dominar A1») y cuántas faltan. Una palabra cuenta como conocida si la marcaste como aprendida o la dominaste en el repaso, igual que en «Mi progreso». Los niveles sin palabras aparecen como «Próximamente». Los niveles abiertos se recuerdan entre visitas. Datos: `GET /levels` y `GET /progress/levels` de la API (`src/features/catalog/level-section.tsx`).
 - Búsqueda de palabras con autocompletado desde el inicio.
 - Lecciones por colección (`/learn/:collectionSlug`): imágenes en cuadrícula, audio automático, video embebido y atajos de teclado. Cada palabra se marca como «Quiero aprender», «No me interesa» o «Aprendida», y las ya conocidas se omiten.
@@ -101,7 +102,7 @@ Cada push a `main` lo publica el flujo [.github/workflows/deploy.yml](.github/wo
 | -------- | ---------------------------------------------------------------------- |
 | Secret   | `AWS_WEB_DEPLOY_ROLE_ARN` (salida `WebDeployRoleArn` del stack)        |
 | Variable | `WEB_BUCKET`, `DISTRIBUTION_ID` (salidas del stack)                    |
-| Variable | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, y opcionales `VITE_DAILYMOTION_PLAYER_ID`, `ANDROID_PACKAGE_ID`, `ANDROID_SHA256_CERT_FINGERPRINTS` |
+| Variable | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, y opcionales `VITE_DAILYMOTION_PLAYER_ID`, `VITE_FACEBOOK_LOGIN`, `ANDROID_PACKAGE_ID`, `ANDROID_SHA256_CERT_FINGERPRINTS` |
 
 La URL y la clave anónima de Supabase son públicas por diseño (van dentro del JavaScript que descarga el navegador), pero se configuran en GitHub para que el repositorio no dependa de un proyecto concreto.
 

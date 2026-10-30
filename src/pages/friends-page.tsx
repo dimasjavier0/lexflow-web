@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Avatar } from "../components/avatar";
+import { FeatureUnavailable } from "../components/feature-unavailable";
 import { StatusPage } from "../components/status-page";
 import { Alert, Button, EmptyState, Eyebrow } from "../components/ui";
 import { useAuth } from "../contexts/auth-context";
 import { errorMessage, useAsyncAction } from "../hooks/use-async-action";
 import { AppLayout } from "../layouts/app-layout";
 import { getFriends, type FriendRow, type Friends } from "../lib/api";
+import { FACEBOOK_LOGIN_ENABLED } from "../lib/features";
 import { cn } from "../lib/cn";
 
 const count = new Intl.NumberFormat("es");
@@ -33,14 +35,14 @@ function RankingRow({ row, rank, isMe }: { row: FriendRow; rank: number; isMe: b
   );
 }
 
-function ConnectPrompt({ title, children, actionLabel }: { title: string; children: string; actionLabel: string }) {
+function ConnectPrompt({ title, children, actionLabel, onUnavailable }: { title: string; children: string; actionLabel: string; onUnavailable: () => void }) {
   const { connectFacebook } = useAuth();
   const connect = useAsyncAction();
   return (
     <section className="grid justify-items-start gap-3 rounded-2xl border border-line bg-surface p-4 shadow-card sm:p-6">
       <h2 className="m-0 text-xl font-bold tracking-tight">{title}</h2>
       <p className="m-0 max-w-xl text-sm text-muted">{children}</p>
-      <Button isLoading={connect.isPending} loadingLabel="Redirigiendo..." onClick={() => void connect.run(connectFacebook, "No se pudo conectar con Facebook.")}>
+      <Button isLoading={connect.isPending} loadingLabel="Redirigiendo..." onClick={() => (FACEBOOK_LOGIN_ENABLED ? void connect.run(connectFacebook, "No se pudo conectar con Facebook.") : onUnavailable())}>
         {actionLabel}
       </Button>
       {connect.error ? <Alert className="w-full">{connect.error}</Alert> : null}
@@ -55,6 +57,7 @@ export function FriendsPage() {
   const [friends, setFriends] = useState<Friends | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [showFacebookNotice, setShowFacebookNotice] = useState(false);
 
   // Waits for a Facebook sign-in that just came back, so the list already has its friends.
   useEffect(() => {
@@ -74,6 +77,7 @@ export function FriendsPage() {
     };
   }, [isSyncingFacebook, reloadKey]);
 
+  if (showFacebookNotice) return <FeatureUnavailable onBack={() => setShowFacebookNotice(false)} backLabel="Volver a Amigos" />;
   if (isSyncingFacebook) return <StatusPage isLoading>Buscando a tus amigos de Facebook...</StatusPage>;
   if (loadError) return <StatusPage action={<Button onClick={() => setReloadKey((key) => key + 1)}>Reintentar</Button>}>{loadError}</StatusPage>;
   if (!friends) return <StatusPage isLoading>Cargando tus amigos...</StatusPage>;
@@ -93,11 +97,11 @@ export function FriendsPage() {
       {facebookSyncError ? <Alert className="mb-4">{facebookSyncError}</Alert> : null}
 
       {!facebook.connected ? (
-        <ConnectPrompt title="Conecta tu cuenta de Facebook" actionLabel="Conectar con Facebook">
+        <ConnectPrompt title="Conecta tu cuenta de Facebook" actionLabel="Conectar con Facebook" onUnavailable={() => setShowFacebookNotice(true)}>
           Verás cuántas palabras han aprendido tus amigos de Facebook que también usan LexFlow, y ellos verán las tuyas.
         </ConnectPrompt>
       ) : !facebook.friendsGranted ? (
-        <ConnectPrompt title="Falta permiso para ver tu lista de amigos" actionLabel="Permitir ver mis amigos">
+        <ConnectPrompt title="Falta permiso para ver tu lista de amigos" actionLabel="Permitir ver mis amigos" onUnavailable={() => setShowFacebookNotice(true)}>
           Al entrar con Facebook no se compartió tu lista de amigos, así que LexFlow no sabe quiénes son. Vuelve a conectar y deja marcada la opción de la lista de amigos.
         </ConnectPrompt>
       ) : friends.friends.length ? (
