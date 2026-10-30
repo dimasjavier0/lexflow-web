@@ -9,6 +9,10 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ## [Unreleased]
 
+### Changed
+
+- «Continuar con Facebook», en el inicio de sesión, y «Conectar con Facebook» y «Permitir ver mis amigos», en Amigos, muestran por ahora una pantalla que avisa de que esta función no está disponible y que estamos trabajando en ella, con un botón para volver. Para entrar, usa Google.
+
 ## [1.2.0] - 2026-10-27
 
 ### Added

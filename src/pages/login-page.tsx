@@ -1,19 +1,24 @@
+import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { BrandMark } from "../components/brand-mark";
+import { FeatureUnavailable } from "../components/feature-unavailable";
 import { StatusPage } from "../components/status-page";
 import { Alert, Button } from "../components/ui";
 import { useAuth } from "../contexts/auth-context";
 import { useAsyncAction } from "../hooks/use-async-action";
 import { AuthLayout } from "../layouts/auth-layout";
+import { FACEBOOK_LOGIN_ENABLED } from "../lib/features";
 
 export function LoginPage() {
   const { isAuthenticated, isLoading, signInWithGoogle, signInWithFacebook, wasAccountDeleted } = useAuth();
   const google = useAsyncAction();
   const facebook = useAsyncAction();
   const error = google.error ?? facebook.error;
+  const [showFacebookNotice, setShowFacebookNotice] = useState(false);
 
   if (isLoading) return <StatusPage isLoading>Comprobando sesión...</StatusPage>;
   if (isAuthenticated) return <Navigate to="/" replace />;
+  if (showFacebookNotice) return <FeatureUnavailable onBack={() => setShowFacebookNotice(false)} backLabel="Volver al inicio de sesión" />;
 
   return (
     <AuthLayout>
@@ -30,7 +35,7 @@ export function LoginPage() {
           <Button size="lg" isLoading={google.isPending} loadingLabel="Redirigiendo..." onClick={() => void google.run(signInWithGoogle, "No se pudo iniciar sesión.")}>
             Continuar con Google
           </Button>
-          <Button size="lg" variant="secondary" isLoading={facebook.isPending} loadingLabel="Redirigiendo..." onClick={() => void facebook.run(signInWithFacebook, "No se pudo iniciar sesión.")}>
+          <Button size="lg" variant="secondary" isLoading={facebook.isPending} loadingLabel="Redirigiendo..." onClick={() => (FACEBOOK_LOGIN_ENABLED ? void facebook.run(signInWithFacebook, "No se pudo iniciar sesión.") : setShowFacebookNotice(true))}>
             Continuar con Facebook
           </Button>
         </div>
