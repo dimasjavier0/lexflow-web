@@ -9,6 +9,8 @@ Hasta la 0.6.0, la web y la API vivían juntas en el monorepo [LexFlow-1.0](http
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-30
+
 ### Changed
 
 - «Continuar con Facebook», en el inicio de sesión, y «Conectar con Facebook» y «Permitir ver mis amigos», en Amigos, muestran por ahora una pantalla que avisa de que esta función no está disponible y que estamos trabajando en ella, con un botón para volver. Para entrar, usa Google.
@@ -179,7 +181,8 @@ Primera versión como repositorio propio, lista para desplegarse por separado de
 - Estado global: React Context.
 - Formularios: React Hook Form con Zod.
 
-[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/dimasjavier0/lexflow-web/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.1.0
 [1.0.0]: https://github.com/dimasjavier0/lexflow-web/releases/tag/v1.0.0
